@@ -10,6 +10,13 @@
       "className": "ImeetingApply",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.componet.meeting.iweekapply",
+      "comName": "周会议申请",
+      "className": "IWeekApply",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }
