@@ -17,6 +17,13 @@
       "className": "IWeekApply",
       "comType": "common",
       "comLangue": "vue"
+    },
+    {
+      "classId": "idm.componet.meeting.imeetingweekmgr",
+      "comName": "会议室管理",
+      "className": "ImeetingWeekMgr",
+      "comType": "common",
+      "comLangue": "vue"
     }
   ]
 }

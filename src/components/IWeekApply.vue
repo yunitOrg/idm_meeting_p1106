@@ -112,9 +112,9 @@ export default {
       // 日期 结束时间
       endTime: '',
       // 工作 开始时间
-      workStar: '',
+      workStar: '0:00',
       // 工作 结束时间
-      workEnd: '',
+      workEnd: '24:00',
       // 色块
       blockList: [],
       // 会议室
@@ -226,8 +226,8 @@ export default {
       this.startTime = data.showStartDate;
       this.endTime = data.showEndDate;
       this.isShowBuilding = data.isShowBuilding;
-      this.workStar = data.workingStartTime;
-      this.workEnd = data.offDutyEndTime;
+      // this.workStar = data.workingStartTime;
+      // this.workEnd = data.offDutyEndTime;
       this.roomList = data.room;
       
       // 初始化表头
@@ -246,10 +246,15 @@ export default {
         if (trAll.length <= 0) return
         this.blockList.forEach(item => {
           let start = item.satrtTime.split(' ')[1];
+          let s = start.split(':');
+          start = `${s[0]}:${s[1]}`;
           let end = item.endTime.split(' ')[1];
+          let e = end.split(':');
+          end = `${e[0]}:${e[1]}`;
           let people = item.attendUserNum ? `<span>${item.attendUserNum}</span>` : ''
           let str = `<div class="block-center" style='color:${item.color};margin-bottom:10px;'>
-              <div><img style='width:15px;margin-right:3px;' src='${timeimg}'/> ${start}-${end}${item.bt}</div>
+              <div><img style='width:15px;margin-right:3px;' src='${timeimg}'/> ${start}-${end}</div>
+              <div>${item.bt}</div>
               <div><img style='width:15px;margin-right:3px;' src='${peopleimg}' />${item.ngr} ${people}</div>
             </div>`
           let line = trAll[item.roomIndex];
