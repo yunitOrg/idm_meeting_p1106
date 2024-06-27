@@ -231,7 +231,7 @@ export default {
     this.init();
     // 挂载到window上
     window.meetingApply = {
-      handleAgainRenderBlock: this.handleAgainRenderBlock
+      handleRefreshTable: this.handleRefreshTable
     }
   },
   methods: {

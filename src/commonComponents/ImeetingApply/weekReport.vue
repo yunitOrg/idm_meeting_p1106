@@ -104,6 +104,7 @@ export default {
     },
     handleSetTime(type) {
       if(type == 'year') {
+        this.yearList = weekYear(this.search.year);
         this.weekList = getAllWeekOfYear(this.search.year)
         this.search.week = 1
       }

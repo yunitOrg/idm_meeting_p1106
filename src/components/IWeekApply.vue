@@ -16,6 +16,7 @@
       </div>
       <!--表格-->
       <div class="weektable" :style="`height: ${propData.tableHeight}`">
+        <a-spin class="weekapply-loading" :spinning="loading"></a-spin>
         <simplebarvue class="idm-meeting-room-card-wrapper">
           <table ref="table" class="idm-meeting-room-card-table" border="1" cellspacing="0">
             <thead>
@@ -99,6 +100,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       selectWeekObj: {
         start: '',
         end: ''
@@ -318,6 +320,7 @@ export default {
       }
     },
     async requireData() {
+      this.loading = true;
       this.showtable = false;
       let obj = {
         showStartDate: this.selectWeekObj.start,
@@ -325,10 +328,12 @@ export default {
       }
       let res = await API.ApiWeekRoomList(obj)
       if (res.code == '200') {
+        this.loading = false;
         this.showtable = true;
         let data = res.data || {};
         this.initTable(data)
       } else {
+        this.loading = false;
         this.showtable = true;
       }
     },
@@ -342,6 +347,11 @@ export default {
 
 <style lang="scss" scoped>
 .iweekapply{
+  .weekapply-loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
   .flexcenter{
     display: flex;
     justify-content: center;
