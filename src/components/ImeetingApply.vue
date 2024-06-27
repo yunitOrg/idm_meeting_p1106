@@ -229,6 +229,10 @@ export default {
     this.moduleObject = this.$root.moduleObject;
     this.requireDic();
     this.init();
+    // 挂载到window上
+    window.meetingApply = {
+      handleAgainRenderBlock: this.handleAgainRenderBlock
+    }
   },
   methods: {
     // 重新渲染色块
