@@ -245,13 +245,21 @@ export default {
         let trAll = document.querySelectorAll('.tabletbody tr');
         if (trAll.length <= 0) return
         this.blockList.forEach(item => {
-          let start = item.satrtTime.split(' ')[1];
-          let s = start.split(':');
-          start = `${s[0]}:${s[1]}`;
-          let end = item.endTime.split(' ')[1];
-          let e = end.split(':');
-          end = `${e[0]}:${e[1]}`;
-          let people = item.attendUserNum ? `<span>${item.attendUserNum}</span>` : ''
+          let start = '', end = '';
+          if (moment(item.satrtTime, "YYYY-MM-DD").isSame(moment(item.endTime, "YYYY-MM-DD"))) {
+            start = item.satrtTime.split(' ')[1];
+            let s = start.split(':');
+            start = `${s[0]}:${s[1]}`;
+            
+            end = item.endTime.split(' ')[1];
+            let e = end.split(':');
+            end = `${e[0]}:${e[1]}`;
+          } else {
+            start = item.satrtTime?.substring(0, item.satrtTime.length - 3);
+            end = item.endTime?.substring(0, item.endTime.length - 3);
+          }
+
+          let people = item.attendUserNum ? `<span>${item.attendUserNum}</span>人` : ''
           let str = `<div class="block-center" style='color:${item.color};margin-bottom:10px;'>
               <div><img style='width:15px;margin-right:3px;' src='${timeimg}'/> ${start}-${end}</div>
               <div>${item.bt}</div>
@@ -317,7 +325,7 @@ export default {
               meeting.room = `${room.roomClass}${room.roomName}`
               meeting.roomId = room.roomId;
               meeting.roomName = room.roomName;
-              this.computedRoomTime(meeting, ri, room.roomId)
+              this.computedRoomTime(meeting, ri, room.roomId);
             })
           }
         });
