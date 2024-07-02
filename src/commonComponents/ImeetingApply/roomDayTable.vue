@@ -3,7 +3,7 @@
     <simplebarvue class="idm-meeting-room-card-wrapper">
         <!--色块-->
         <div class="idm-meeting-room-card-block-outer">
-          <div v-for="(block, b) in blockList" :key="b" class="idm-meeting-room-card-block" :style="`top:${(block.roomIndex * 51)+51}px`" @click="handleOpenUrl(block)">
+          <div v-for="(block, b) in blockList" :key="b" class="idm-meeting-room-card-block" @click="handleOpenUrl(block)">
             <a-tooltip>
               <div class="idm-meeting-room-tooltip" slot="title">
                 <template v-if="block.dataType == 2">
@@ -400,10 +400,14 @@ export default {
         }
         const tdWidth = tableEle.offsetWidth - sum;
         const sectionWidth = tdWidth / this.theadList.length;
+        
+        let tdHeight = tableEle && tableEle.querySelector('td').offsetHeight;
+        
         this.blockList.forEach((block, index) => {
           const styleObject = {};
           styleObject["left"] = sum + sectionWidth * block.enterIndex + "px";
           styleObject["width"] = sectionWidth * block.count + "px";
+          styleObject['top'] = (block.roomIndex * tdHeight) + tdHeight + 'px';
           window.IDM.setStyleToPageHead(
             this.moduleObject.id +
               " .roomtable .idm-meeting-room-card-block-outer .idm-meeting-room-card-block:nth-child(" +
