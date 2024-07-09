@@ -10,30 +10,30 @@ export function getMeetingData() {
         workingStartTime: '09:00',
         thead: [
             {
-                day: '6.10',
+                day: '7.08',
                 type: 1, // 1：休 2：班
                 tip: '休'
             },
             {
-                day: '6.11',
+                day: '7.09',
                 tip: ''
             },
             {
-                day: '6.12',
+                day: '7.10',
             },
             {
-                day: '6.13',
+                day: '7.11',
             },
             {
-                day: '6.14',
+                day: '7.12',
             },
             {
-                day: '6.15',
+                day: '7.13',
                 tip: '班',
                 type: 2
             },
             {
-                day: '6.16',
+                day: '7.14',
                 tip: '休',
                 type: 1
             },
@@ -44,7 +44,7 @@ export function getMeetingData() {
               "codeName": "",
               "meetingRoomUsageData": [
                 {
-                  "satrtTime": "2024-06-27 08:00:00",
+                  "satrtTime": "2024-07-08 08:00:00",
                   "dataType": "1",
                   "mobile": "13918345255",
                   "url": "ctrl/formControl/form?listId=210607181937YJxUC5fve4y7q3SH5hJ&mId=190121161348OthBI4s3sEhvfuDJ5FD&moduleId=190121161348OthBI4s3sEhvfuDJ5FD&method=pageCheckInfo&validateByList=1&pk=2406121533329okPVfgMKYoni6BZJsC&hasMine=false&isRoomManager=false&occupyStatus=2",
@@ -55,7 +55,7 @@ export function getMeetingData() {
                   "statusText": "占用",
                   "ngr": "周东升",
                   "meetingDuring": "2024-06-27 08:00:00至2024-06-27 10:00:00",
-                  "endTime": "2024-06-27 10:00:00",
+                  "endTime": "2024-07-08 10:00:00",
                   "status": 3
                 },
                 {

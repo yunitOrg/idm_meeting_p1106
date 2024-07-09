@@ -13,8 +13,8 @@
     <div class="meetingweekmg-wrap">
       <div class="meeting-top mrl20">
         <div class="meeting-left">
-          <span class="mr20">值班秘书：<span>于洋</span></span>
-          <span>值班电话：<span>9999</span></span>
+          <span class="mr20">值班秘书：<span>{{ allData.name }}</span></span>
+          <span>值班电话：<span>{{ allData.phone }}</span></span>
         </div>
         <div class="meeting-center">
           <weekReport :value.sync="selectWeekObj" @handleRefresh="handleReWeekData"></weekReport>
@@ -39,16 +39,16 @@
             <table ref="table" class="idm-meeting-room-card-table" border="1" cellspacing="0">
               <thead>
                 <tr class="room-sticky">
-                  <td ref="tableTdName"  rowspan="2">
+                  <td ref="tableTdName"  rowspan="2" class="room-thead">
                     <div class="td-name">
                         会议室名称
                       <span class="table-arrow"></span>
                     </div>
                   </td>
                   <td class="td-time" v-for="(td, t) in theadList" :key="t" :class="{
-                    'holiday': t>=5
+                    'holiday': t>=5,
                   }">
-                    <div class="td-block">
+                    <div class="td-block" :class="checkCurrentDay(td) ? 'currentDay': ''">
                       <div class="td-day">{{ weekCn[t] }}</div>
                       <span>{{ td.day }}
                         <i :class="{
@@ -110,6 +110,7 @@ export default {
         start: '',
         end: ''
       },
+      allData: {},
       year: '',
       weekCn: ["一", "二", "三", "四", "五", "六", "日"],
       // 工作 开始时间
@@ -142,6 +143,7 @@ export default {
         }
       ],
       moduleObject: {},
+      
       propData: this.$root.propData.compositeAttr || {
         width: '100%',
         height: '100%',
@@ -167,6 +169,11 @@ export default {
     this.init();
   },
   methods: {
+    // 检测是否当天
+    checkCurrentDay(td) {
+      let day = `${this.year}.${td.day}`.replace(/\./g, '-');
+      return moment(moment().format('YYYY-MM-DD')).isSame(moment(day))
+    },
     handleReWeekData() {
       this.requireData()
     },
@@ -230,7 +237,8 @@ export default {
       this.theadList = [];
       this.roomList = [];
       this.blockList = [];
-
+      
+      this.allData = data;
       this.workStar = data.workingStartTime;
       this.workEnd = data.offDutyEndTime;
       this.theadList = data.thead;
@@ -258,9 +266,23 @@ export default {
           end = `${e[0]}:${e[1]}`;
 
           let people = item.attendUserNum ? `<span>${item.attendUserNum}</span>` : ''
-          let str = `<div class="block-center" style='color:${item.color};margin-bottom:10px;'>
-              <div> ${start}-${end}${item.bt}</div>
-              <div> ${item.ngr} ${people}</div>
+          let color = item.colorType == 2 ? '#F3F8FF' : ''
+          // <div> ${start}-${end}${item.bt}</div>
+          // <div> ${item.ngr} ${people}</div>
+          let str = `<div class="block-center" style='background-color:${color};margin-bottom:10px;
+            border-radius:5px;padding:5px;box-sizing:border-box;display:flex;justify-content:space-between;color:#333;'>
+              <div style="width:45%;display:flex;flex-direction:column;align-items:center;">
+                <span>${start}</span>
+                <span>|</span>
+                <span>${end}</span>
+              </div>
+              <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;">
+                <div>${item.bt}</div>
+                <div>
+                  <span>xxx</span>
+                  ${people}
+                </div>
+              </div>
             </div>`
           let line = trAll[item.roomIndex];
           let lie = line.querySelectorAll('td')[item.enterIndex];
@@ -275,9 +297,11 @@ export default {
     // 计算颜色
     hanldeColorBlock(meeting) {
       if (meeting.isAttend == 1 || meeting.status == 2 ) { // 已参会
-        meeting.color = this.legendList[1].color
+        meeting.color = this.legendList[1].color;
+        meeting.colorType = 1;
       } else {
-        meeting.color = this.legendList[0].color
+        meeting.color = this.legendList[0].color;
+        meeting.colorType = 2;
       }
     },
     /**
@@ -376,6 +400,7 @@ export default {
       }
       .legend-item{
         margin-right: 20px;
+        color: #333333;
         &:last-child {
           margin-right: 0;
         }
@@ -453,10 +478,10 @@ export default {
           width: 90px;
         }
         .td-div{
-          width: 100%;
-          height: 100%;
-          margin: 10px 5px;
-          min-height: 80px;
+          // width: 100%;
+          // height: 100%;
+          // margin: 10px 5px;
+          // min-height: 80px;
         }
         .td-div-head{
           display: flex;
@@ -478,6 +503,9 @@ export default {
           }
         }
       }
+      .room-thead{
+        border-right-color: transparent;
+      }
       .td-time{
         position: sticky;
         left: 0;
@@ -489,6 +517,7 @@ export default {
           height: 70px;
           background-color: #F4F5F8;
           margin: 10px 5px;
+          border-radius: 2px;
         }
         .td-day{
           font-size: 20px;
@@ -512,6 +541,14 @@ export default {
         }
         .blue{
           color: #1C7BE9;
+        }
+      }
+      .currentDay{
+        background-image:  linear-gradient(270deg, #63A9FA 0%, #1C7BE9 100%);
+        color: #fff;
+        border-radius: 5px !important;
+        .td-day{
+          color: #fff;
         }
       }
       td{
