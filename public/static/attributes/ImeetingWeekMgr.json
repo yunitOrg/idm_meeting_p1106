@@ -122,6 +122,14 @@
             "bindKey": "handleJump",
             "desc": "接口参数：自定义函数参数：{_this: this, data: 接口数据}",
             "multiple": false
+          },
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "会议申请",
+            "bindKey": "handleMeetingJump",
+            "desc": "接口参数：自定义函数参数：{_this: this, data: 当条数据}",
+            "multiple": false
           }
         ]
       }

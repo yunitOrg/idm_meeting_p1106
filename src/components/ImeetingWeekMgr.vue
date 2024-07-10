@@ -278,8 +278,8 @@ export default {
 
           let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : '<span>参会：</span>'
           let bgcolor = item.colorType == 1 ? '#F3F8FF' : item.colorType == 2 ? '#F3FFF7' : '#F9F9F9'; // 背景色
-          let str = `<div class="block-center" style='background-color:${bgcolor};margin-bottom:10px;
-            border-radius:5px;padding:5px;box-sizing:border-box;display:flex;justify-content:space-between;color:#333;'>
+          let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
+          let str = `<div class="block-center" style='background-color:${bgcolor};'>
               <div style="width:30%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
                 <span>${start}</span>
                 <span>|</span>
@@ -292,6 +292,7 @@ export default {
                   ${people}
                 </div>
               </div>
+              <div class="block-btn-img" onclick="handleChildJump(${jsonitem})"><i></i></div>
             </div>`
           let line = trAll[item.roomIndex];
           let lie = line.querySelectorAll('td')[item.enterIndex];
@@ -392,11 +393,63 @@ export default {
     },
     init() {
       this.handleStyle()
-      this.requireData()
+      this.requireData();
+      // 会议点击
+      window.handleChildJump = (item) => {
+        console.log(item)
+        if (this.propData.handleJump && this.propData.handleJump.length > 0) {
+          let name = this.propData.handleJump[0].name
+          window[name] && window[name].call(this, {
+            _this: this,
+            data: item
+          });
+        }
+      }
     }
   }
 }
 </script>
+
+<style lang="scss">
+.block-center{
+  margin-bottom:10px;
+  border-radius:5px;
+  padding:5px;
+  box-sizing:border-box;
+  display:flex;
+  justify-content:space-between;
+  color:#333;
+  position: relative;
+  &:hover{
+    .block-btn-img{
+      display: block;
+    }
+  }
+  .block-btn-img{
+    display: none;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width:24px;
+    height:24px;
+    z-index: 9;
+    background-color: #207EEA;
+    border-radius:5px;
+    i{
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background-image: url('../assets/plus.png');
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      margin-top: 3px;
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .meetingweekmg-wrap{
