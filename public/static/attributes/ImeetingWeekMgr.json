@@ -25,7 +25,15 @@
             "text": "表格高度",
             "desc": "表格高度",
             "bindKey": "tableHeight",
-            "default": "calc(100vh - 120px)"
+            "default": "calc(100vh - 90px)"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "表格内容",
+            "desc": "表格内容",
+            "bindKey": "tableContent",
+            "default": "calc(100vh - 179px)"
           }
         ]
       },
@@ -99,6 +107,22 @@
               "text": "边框",
               "bindKey": "boxborder"
             }
+        ]
+      },
+      {
+        "type": "group",
+        "text": "高级",
+        "desc": "点击？查看样式设置用法指南",
+        "helpUrl": "",
+        "children": [
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "会议室申请",
+            "bindKey": "handleJump",
+            "desc": "接口参数：自定义函数参数：{_this: this, data: 接口数据}",
+            "multiple": false
+          }
         ]
       }
   ]

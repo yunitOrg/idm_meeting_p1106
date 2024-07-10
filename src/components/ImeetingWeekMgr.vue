@@ -13,8 +13,8 @@
     <div class="meetingweekmg-wrap">
       <div class="meeting-top mrl20">
         <div class="meeting-left">
-          <span class="mr20">值班秘书：<span>{{ allData.name }}</span></span>
-          <span>值班电话：<span>{{ allData.phone }}</span></span>
+          <span class="mr20">值班秘书：<span>{{ allData.secretary }}</span></span>
+          <span>值班电话：<span>{{ allData.secretaryPhone }}</span></span>
         </div>
         <div class="meeting-center">
           <weekReport :value.sync="selectWeekObj" @handleRefresh="handleReWeekData"></weekReport>
@@ -33,8 +33,9 @@
         </div>
       </div>
       <!--表格-->
-      <div class="meetintable">
-        <div :style="`height: ${propData.tableHeight}`">
+      <div class="meetintable" :style="`height: ${propData.tableHeight}`">
+        <div :style="`height: ${propData.tableContent}`">
+          <a-spin class="weekapply-loading" :spinning="loading"></a-spin>
           <simplebarvue class="idm-meeting-room-card-wrapper">
             <table ref="table" class="idm-meeting-room-card-table" border="1" cellspacing="0">
               <thead>
@@ -45,12 +46,10 @@
                       <span class="table-arrow"></span>
                     </div>
                   </td>
-                  <td class="td-time" v-for="(td, t) in theadList" :key="t" :class="{
-                    'holiday': t>=5,
-                  }">
+                  <td class="td-time" v-for="(td, t) in theadCopyList" :key="t">
                     <div class="td-block" :class="checkCurrentDay(td) ? 'currentDay': ''">
                       <div class="td-day">{{ weekCn[t] }}</div>
-                      <span>{{ td.day }}
+                      <span>{{ td.dayCut }}
                         <i :class="{
                           red: td.type == '1',
                           blue: td.type == '2'
@@ -60,19 +59,16 @@
                   </td>
                 </tr>
               </thead>
-              <tbody class="tabletbody">
+              <tbody class="tabletbody" v-if="showtable">
                 <tr v-for="(room, r) in roomList" :key="r">
                   <td class="td-room">
                     <div class="td-div-head">
-                      <span>{{ room.roomNum }} {{ room.roomName }}</span>
+                      <span>{{ room.roomName }}</span>
                       <div>可容纳：{{ room.capacity }}人</div>
                     </div>
                   </td>
-                  <template v-for="(td, subindex) in theadList">
+                  <template v-for="(td, subindex) in theadCopyList">
                     <td :key="subindex"
-                        :class="{
-                        'holiday': subindex>=5
-                      }"
                       class="td-item">
                       <div class="td-div"></div>
                     </td>
@@ -83,7 +79,7 @@
           </simplebarvue>
         </div>
         <!--按钮-->
-        <div class="meetingaddbtn">
+        <div class="meetingaddbtn" @click="handleJumpUrl">
           <i></i>
           <span>会议室申请</span>
         </div>
@@ -98,6 +94,7 @@ import simplebarvue from "simplebar-vue";
 import "simplebar-vue/dist/simplebar.min.css";
 import { getMeetingData } from '../utils/mock';
 import moment from "moment";
+import API from '../api/index'
 export default {
   name: 'ImeetingWeekMgr',
   components: {
@@ -110,6 +107,8 @@ export default {
         start: '',
         end: ''
       },
+      loading: false,
+      showtable: true,
       allData: {},
       year: '',
       weekCn: ["一", "二", "三", "四", "五", "六", "日"],
@@ -143,14 +142,11 @@ export default {
         }
       ],
       moduleObject: {},
-      
       propData: this.$root.propData.compositeAttr || {
         width: '100%',
         height: '100%',
-        tableHeight: 'calc(100vh - 156px)',
-        bgColor: {
-          hex8: '#f5f5f5'
-        },
+        tableHeight: 'calc(100vh - 90px)',
+        tableContent: 'calc(100vh - 179px)',
         ulbox: {
           marginTopVal: "",
           marginRightVal: "",
@@ -169,9 +165,22 @@ export default {
     this.init();
   },
   methods: {
+    // 会议室申请跳转url
+    handleJumpUrl() {
+      if (!this.allData.formUrl) {
+        return
+      }
+      if (this.propData.handleJump && this.propData.handleJump.length > 0) {
+        let name = this.propData.handleJump[0].name
+        window[name] && window[name].call(this, {
+          _this: this,
+          data: this.allData
+        });
+      }
+    },
     // 检测是否当天
     checkCurrentDay(td) {
-      let day = `${this.year}.${td.day}`.replace(/\./g, '-');
+      let day = `${this.year}.${td.dayCut}`.replace(/\./g, '-');
       return moment(moment().format('YYYY-MM-DD')).isSame(moment(day))
     },
     handleReWeekData() {
@@ -220,6 +229,7 @@ export default {
         while (start.isBefore(end) || start.isSame(end)) {
           this.theadCopyList.push({
             day: start.format('YYYY-MM-DD'),
+            dayCut: start.format('MM.DD')
           })
           start = moment(start).add(1, 'days')
         }
@@ -227,7 +237,7 @@ export default {
         for(let i=1; i<=7; i++) {
           this.theadCopyList.push({
             day: start.format('YYYY-MM-DD'),
-            noon: this.noon
+            dayCut: start.format('MM.DD')
           })
           start = moment(start).add(1, 'days')
         }
@@ -235,13 +245,14 @@ export default {
     },
     initTable(data) {
       this.theadList = [];
+      this.theadCopyList = [];
       this.roomList = [];
       this.blockList = [];
       
       this.allData = data;
       this.workStar = data.workingStartTime;
       this.workEnd = data.offDutyEndTime;
-      this.theadList = data.thead;
+      // this.theadList = data.thead;
       this.roomList = data.room;
       this.year = this.selectWeekObj?.start?.split('-')[0]
 
@@ -265,28 +276,26 @@ export default {
           let e = end.split(':');
           end = `${e[0]}:${e[1]}`;
 
-          let people = item.attendUserNum ? `<span>${item.attendUserNum}</span>` : ''
-          let color = item.colorType == 2 ? '#F3F8FF' : ''
-          // <div> ${start}-${end}${item.bt}</div>
-          // <div> ${item.ngr} ${people}</div>
-          let str = `<div class="block-center" style='background-color:${color};margin-bottom:10px;
+          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : '<span>参会：</span>'
+          let bgcolor = item.colorType == 1 ? '#F3F8FF' : item.colorType == 2 ? '#F3FFF7' : '#F9F9F9'; // 背景色
+          let str = `<div class="block-center" style='background-color:${bgcolor};margin-bottom:10px;
             border-radius:5px;padding:5px;box-sizing:border-box;display:flex;justify-content:space-between;color:#333;'>
-              <div style="width:45%;display:flex;flex-direction:column;align-items:center;">
+              <div style="width:30%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
                 <span>${start}</span>
                 <span>|</span>
                 <span>${end}</span>
               </div>
-              <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;">
+              <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;display:flex;flex-direction:column;justify-content:space-between;color:#333;width:70%;">
                 <div>${item.bt}</div>
-                <div>
-                  <span>xxx</span>
+                <div style="display:flex;justify-content:space-between">
+                  <span>${item.ngr}</span>
                   ${people}
                 </div>
               </div>
             </div>`
           let line = trAll[item.roomIndex];
           let lie = line.querySelectorAll('td')[item.enterIndex];
-          if (lie.innerHTML) {
+          if (lie && lie.innerHTML) {
             lie.innerHTML = lie.innerHTML + str
           } else {
             lie && (lie.innerHTML = str)
@@ -294,14 +303,17 @@ export default {
         })
       })
     },
-    // 计算颜色
+    // 计算颜色   status: 1 待审核 2 已占用 9 已过期
     hanldeColorBlock(meeting) {
-      if (meeting.isAttend == 1 || meeting.status == 2 ) { // 已参会
-        meeting.color = this.legendList[1].color;
-        meeting.colorType = 1;
-      } else {
+      if (meeting.status == 1 ) {
         meeting.color = this.legendList[0].color;
+        meeting.colorType = 1;
+      } else if (meeting.status == 2) {
+        meeting.color = this.legendList[1].color;
         meeting.colorType = 2;
+      } else if (meeting.status == 9) {
+        meeting.color = this.legendList[2].color;
+        meeting.colorType = 9;
       }
     },
     /**
@@ -351,20 +363,34 @@ export default {
           }
         });
         this.blockList = this.blockList.filter(k => k.count > 0);
-        console.log(this.blockList, 123)
       }
     },
     getMockData() {
       let obj = getMeetingData();
       this.initTable(obj)
     },
-    requireData() {
+    async requireData() {
       if (this.moduleObject.env !== 'production') {
         this.getMockData()
         return
       }
+      this.loading = true;
+      this.showtable = false;
+      let obj = {
+        startTime: this.selectWeekObj.start,
+        endTime: this.selectWeekObj.end
+      }
+      let res = await API.ApiMeeting(obj);
+      if(res.code == '200') {
+        this.loading = false;
+        this.showtable = true;
+        this.initTable(res.data)
+      } else {
+        this.loading = false;
+        this.showtable = true;
+      }
     },
-    init() {  
+    init() {
       this.handleStyle()
       this.requireData()
     }
@@ -374,6 +400,11 @@ export default {
 
 <style lang="scss" scoped>
 .meetingweekmg-wrap{
+  .weekapply-loading{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+  }
   .displayflex{
     display: flex;
   }
@@ -416,8 +447,9 @@ export default {
     }
   }
   .meetintable{
+    position: relative;
     background-color: #fff;
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px 20px 20px 20px;
     padding: 29px 20px 0 20px;
     background-image: url('../assets/tu-1.png');
     background-repeat: no-repeat;
@@ -444,6 +476,7 @@ export default {
         left: 0;
         top: 0;
         z-index: 3;
+        background-color: #fff;
       }
       .table-arrow{
         width: 6px;
@@ -476,6 +509,7 @@ export default {
         }
         td{
           width: 90px;
+          padding: 10px 0;
         }
         .td-div{
           // width: 100%;
@@ -582,6 +616,11 @@ export default {
     }
   }
   .meetingaddbtn{
+    cursor: pointer;
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     margin: 10px auto 0;
     display: flex;
     align-items: center;
