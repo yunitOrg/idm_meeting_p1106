@@ -29,7 +29,7 @@ export default {
     formdata.append('endTime', endTime)
     formdata.append('freeTime', '')
     formdata.append('checkedIdle', false)
-    const { data } = await window.IDM.http.post('ctrl/meetingPortal/getDayUsageInfoByMeetingRoom', formdata, {
+    const { data } = await window.IDM.http.post('ctrl/meetingExt/apply/getDayUsageInfoByMeetingRoom', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },

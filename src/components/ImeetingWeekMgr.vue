@@ -71,6 +71,7 @@
                     <td :key="subindex"
                       class="td-item">
                       <div class="td-div"></div>
+                      <div class="block-btn-img" @click.stop="handleChildJump(room, td)"><i></i></div>
                     </td>
                   </template>
                 </tr>
@@ -165,11 +166,20 @@ export default {
     this.init();
   },
   methods: {
+    handleChildJump(room, td) {
+      if (this.propData.handleMeetingJump && this.propData.handleMeetingJump.length > 0) {
+        let name = this.propData.handleMeetingJump[0].name
+        window[name] && window[name].call(this, {
+          _this: this,
+          data: {
+            room: room,
+            time: td
+          }
+        });
+      }
+    },
     // 会议室申请跳转url
     handleJumpUrl() {
-      if (!this.allData.formUrl) {
-        return
-      }
       if (this.propData.handleJump && this.propData.handleJump.length > 0) {
         let name = this.propData.handleJump[0].name
         window[name] && window[name].call(this, {
@@ -276,7 +286,7 @@ export default {
           let e = end.split(':');
           end = `${e[0]}:${e[1]}`;
 
-          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : '<span>参会：</span>'
+          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : ''
           let bgcolor = item.colorType == 1 ? '#F3F8FF' : item.colorType == 2 ? '#F3FFF7' : '#F9F9F9'; // 背景色
           let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
           let str = `<div class="block-center" style='background-color:${bgcolor};'>
@@ -292,7 +302,6 @@ export default {
                   ${people}
                 </div>
               </div>
-              <div class="block-btn-img" onclick="handleChildJump(${jsonitem})"><i></i></div>
             </div>`
           let line = trAll[item.roomIndex];
           let lie = line.querySelectorAll('td')[item.enterIndex];
@@ -394,17 +403,6 @@ export default {
     init() {
       this.handleStyle()
       this.requireData();
-      // 会议点击
-      window.handleChildJump = (item) => {
-        console.log(item)
-        if (this.propData.handleJump && this.propData.handleJump.length > 0) {
-          let name = this.propData.handleJump[0].name
-          window[name] && window[name].call(this, {
-            _this: this,
-            data: item
-          });
-        }
-      }
     }
   }
 }
@@ -420,11 +418,11 @@ export default {
   justify-content:space-between;
   color:#333;
   position: relative;
-  &:hover{
-    .block-btn-img{
-      display: block;
-    }
-  }
+}
+</style>
+
+<style lang="scss" scoped>
+.meetingweekmg-wrap{
   .block-btn-img{
     display: none;
     text-align: center;
@@ -448,11 +446,6 @@ export default {
       margin-top: 3px;
     }
   }
-}
-</style>
-
-<style lang="scss" scoped>
-.meetingweekmg-wrap{
   .weekapply-loading{
     position: absolute;
     top: 50%;
@@ -545,6 +538,14 @@ export default {
           height: 70px;
         }
       }
+      .td-item{
+        position: relative;
+        &:hover{
+          .block-btn-img{
+            display: block;
+          }
+        }
+      }
       tbody{
         border-right: 1px solid transparent;
         tr:first-child td {
@@ -607,6 +608,7 @@ export default {
           border-radius: 2px;
         }
         .td-day{
+          padding-top: 5px;
           font-size: 20px;
           color: #333;
         }
