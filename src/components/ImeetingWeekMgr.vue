@@ -591,6 +591,12 @@ export default {
           }
         }
       }
+      td{
+        border: 1px solid #E6E6E6;
+        border-left-color: transparent;
+        border-top-color: transparent;
+        border-right-color: transparent;
+      }
       .room-thead{
         border-right-color: transparent;
       }
