@@ -44,7 +44,7 @@ export function getMeetingData() {
               "codeName": "",
               "meetingRoomUsageData": [
                 {
-                  "satrtTime": "2024-07-08 08:00:00",
+                  "satrtTime": "2024-07-17 08:00:00",
                   "dataType": "1",
                   "mobile": "13918345255",
                   "url": "ctrl/formControl/form?listId=210607181937YJxUC5fve4y7q3SH5hJ&mId=190121161348OthBI4s3sEhvfuDJ5FD&moduleId=190121161348OthBI4s3sEhvfuDJ5FD&method=pageCheckInfo&validateByList=1&pk=2406121533329okPVfgMKYoni6BZJsC&hasMine=false&isRoomManager=false&occupyStatus=2",
@@ -55,8 +55,8 @@ export function getMeetingData() {
                   "statusText": "占用",
                   "ngr": "周东升",
                   "meetingDuring": "2024-06-27 08:00:00至2024-06-27 10:00:00",
-                  "endTime": "2024-07-08 10:00:00",
-                  "status": 3
+                  "endTime": "2024-07-17 10:00:00",
+                  "status": 0
                 },
                 {
                   "satrtTime": "2024-06-27 10:30:00",

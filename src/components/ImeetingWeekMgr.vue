@@ -286,8 +286,17 @@ export default {
           let e = end.split(':');
           end = `${e[0]}:${e[1]}`;
 
-          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : ''
-          let bgcolor = item.colorType == 1 ? '#F3F8FF' : item.colorType == 2 ? '#F3FFF7' : '#F9F9F9'; // 背景色
+          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : '';
+          let bgcolor = '#F9F9F9';
+          if (item.colorType == 1) {
+            bgcolor = '#F3F8FF'
+          } else if (item.colorType == 2) {
+            bgcolor = '#F3FFF7'
+          } else if (item.colorType == 9) {
+            bgcolor = '#F9F9F9'
+          } else if (item.colorType == 0) {
+            bgcolor = '#FEF5F5'
+          }
           let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
           let str = `<div class="block-center" style='background-color:${bgcolor};'>
               <div style="width:30%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
@@ -313,9 +322,12 @@ export default {
         })
       })
     },
-    // 计算颜色   status: 1 待审核 2 已占用 9 已过期
+    // 计算颜色   status: 0: 红色  1 待审核 2 已占用 9 已过期
     hanldeColorBlock(meeting) {
-      if (meeting.status == 1 ) {
+      if (meeting.status == 0) {
+        meeting.color = '#EB3333';
+        meeting.colorType = 0;
+      } else if (meeting.status == 1 ) {
         meeting.color = this.legendList[0].color;
         meeting.colorType = 1;
       } else if (meeting.status == 2) {
