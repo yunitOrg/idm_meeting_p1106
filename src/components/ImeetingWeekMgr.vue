@@ -71,7 +71,7 @@
                     <td :key="subindex"
                       class="td-item">
                       <div class="td-div"></div>
-                      <div class="block-btn-img" @click.stop="handleChildJump(room, td)"><i></i></div>
+                      <div class="block-btn-img" @click="handleChildJump(room, td)"><i></i></div>
                     </td>
                   </template>
                 </tr>
@@ -133,7 +133,7 @@ export default {
         },
         {
           color: "#20B759",
-          text: "与占用",
+          text: "已占用",
           value: 2
         },
         {
@@ -164,6 +164,9 @@ export default {
   mounted() {
     this.moduleObject = this.$root.moduleObject;
     this.init();
+    window.ImeetingWeekMgr = {
+      requireData: this.requireData
+    }
   },
   methods: {
     handleChildJump(room, td) {
@@ -306,14 +309,15 @@ export default {
               </div>
               <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;display:flex;flex-direction:column;justify-content:space-between;color:#333;width:70%;">
                 <div>${item.bt}</div>
-                <div style="display:flex;justify-content:space-between">
+                <div style="display:flex;flex-direction:column;">
                   <span>${item.ngr}</span>
                   ${people}
                 </div>
               </div>
             </div>`
           let line = trAll[item.roomIndex];
-          let lie = line.querySelectorAll('td')[item.enterIndex];
+          let liedom = line.querySelectorAll('td')[item.enterIndex];
+          let lie = liedom.querySelector('.td-div');
           if (lie && lie.innerHTML) {
             lie.innerHTML = lie.innerHTML + str
           } else {
@@ -388,8 +392,12 @@ export default {
       }
     },
     getMockData() {
+      this.showtable = false;
       let obj = getMeetingData();
-      this.initTable(obj)
+      setTimeout(() => {
+        this.showtable = true;
+        this.initTable(obj)
+      }, 100);
     },
     async requireData() {
       if (this.moduleObject.env !== 'production') {
@@ -429,7 +437,6 @@ export default {
   display:flex;
   justify-content:space-between;
   color:#333;
-  position: relative;
 }
 </style>
 
