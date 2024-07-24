@@ -18,7 +18,7 @@ export default {
     return data
   },
   /**
-   * @Desc 山东中烟-会议管理
+   * @Desc 会议管理
    */
   async ApiMeeting({startTime, endTime}) {
     let formdata = new FormData();

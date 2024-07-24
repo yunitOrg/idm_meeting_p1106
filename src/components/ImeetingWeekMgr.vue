@@ -85,6 +85,21 @@
           <span>会议室申请</span>
         </div>
       </div>
+      <!--抽屉-->
+      <a-drawer
+        placement="right"
+        :title="propData.drawerTile"
+        :closable="true"
+        :width="propData.drawerWidth"
+        :visible="drawerObj.visible"
+        @close="drawerObj.visible = false"
+      >
+        <iframe
+          class="meetingdraweriframe"
+          id="meetingdraweriframe"
+          :src="drawerObj.iframeUrl"
+          :style="{width:'100%',height: propData.drawerIframeHeight,border: 0,outline:'none'}"></iframe>
+      </a-drawer>
     </div>
   </div>
 </template>
@@ -107,6 +122,10 @@ export default {
       selectWeekObj: {
         start: '',
         end: ''
+      },
+      drawerObj: {
+        visible: false,
+        iframeUrl: ''
       },
       loading: false,
       showtable: true,
@@ -146,6 +165,9 @@ export default {
       propData: this.$root.propData.compositeAttr || {
         width: '100%',
         height: '100%',
+        drawerWidth: '50%',
+        drawerTile: '标题',
+        drawerIframeHeight: 'calc(100vh - 112px)',
         tableHeight: 'calc(100vh - 90px)',
         tableContent: 'calc(100vh - 179px)',
         ulbox: {
@@ -169,6 +191,9 @@ export default {
     }
   },
   methods: {
+    openDrawer(type) {
+      this.drawerObj.visible = type;
+    },
     handleChildJump(room, td) {
       if (this.propData.handleMeetingJump && this.propData.handleMeetingJump.length > 0) {
         let name = this.propData.handleMeetingJump[0].name
@@ -300,7 +325,7 @@ export default {
           } else if (item.colorType == 0) {
             bgcolor = '#FEF5F5'
           }
-          let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
+          // let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
           let str = `<div class="block-center" style='background-color:${bgcolor};'>
               <div style="width:30%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
                 <span>${start}</span>

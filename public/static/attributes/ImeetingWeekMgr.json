@@ -34,6 +34,30 @@
             "desc": "表格内容",
             "bindKey": "tableContent",
             "default": "calc(100vh - 179px)"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "抽屉标题",
+            "desc": "抽屉标题内容",
+            "bindKey": "drawerTile",
+            "default": "标题"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "抽屉宽度",
+            "desc": "抽屉宽度",
+            "bindKey": "drawerWidth",
+            "default": "30%"
+          },
+          {
+            "type": "input",
+            "layoutType": "inline",
+            "text": "抽屉iframe",
+            "desc": "抽屉内容的iframe高度",
+            "bindKey": "drawerIframeHeight",
+            "default": "calc(100vh - 112px)"
           }
         ]
       },
