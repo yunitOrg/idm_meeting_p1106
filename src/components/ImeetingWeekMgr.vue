@@ -314,7 +314,7 @@ export default {
           let e = end.split(':');
           end = `${e[0]}:${e[1]}`;
 
-          let people = item.attendUserNum ? `<span>参会：${item.attendUserNum}人</span>` : '';
+          let people = item.attendUserNum ? `<span style="word-wrap:break-word;">参会：${item.attendUserNum}人</span>` : '';
           let bgcolor = '#F9F9F9';
           if (item.colorType == 1) {
             bgcolor = '#F3F8FF'
@@ -333,9 +333,9 @@ export default {
                 <span>${end}</span>
               </div>
               <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;display:flex;flex-direction:column;justify-content:space-between;color:#333;width:70%;">
-                <div>${item.bt}</div>
+                <div style="word-wrap:break-word;">${item.bt}</div>
                 <div style="display:flex;flex-direction:column;">
-                  <span>${item.ngr}</span>
+                  <span style="word-wrap:break-word;">${item.ngr}</span>
                   ${people}
                 </div>
               </div>

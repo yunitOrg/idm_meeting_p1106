@@ -50,7 +50,7 @@ export function getMeetingData() {
                   "url": "ctrl/formControl/form?listId=210607181937YJxUC5fve4y7q3SH5hJ&mId=190121161348OthBI4s3sEhvfuDJ5FD&moduleId=190121161348OthBI4s3sEhvfuDJ5FD&method=pageCheckInfo&validateByList=1&pk=2406121533329okPVfgMKYoni6BZJsC&hasMine=false&isRoomManager=false&occupyStatus=2",
                   "attendUserNum": "32",
                   "isAttend": "-1",
-                  "bt": "〔2024〕第0089次党组会",
+                  "bt": "1232323232222222222222222222222222222222222222222222333333",
                   "ngbm": "办公室",
                   "statusText": "占用",
                   "ngr": "周东升",
