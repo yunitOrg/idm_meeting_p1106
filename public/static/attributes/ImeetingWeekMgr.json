@@ -49,7 +49,7 @@
             "text": "抽屉iframe",
             "desc": "抽屉内容的iframe高度",
             "bindKey": "drawerIframeHeight",
-            "default": "calc(100vh - 112px)"
+            "default": "100%"
           },
           {
             "type": "box",
@@ -61,7 +61,7 @@
               "marginRightVal": "",
               "marginBottomVal": "",
               "marginLeftVal": "",
-              "paddingTopVal": "20px",
+              "paddingTopVal": "0",
               "paddingRightVal": "",
               "paddingBottomVal": "",
               "paddingLeftVal": ""

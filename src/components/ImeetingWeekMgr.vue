@@ -87,8 +87,9 @@
       </div>
       <!--抽屉-->
       <a-drawer
+        class="meetingdrawer"
         placement="right"
-        :closable="true"
+        :closable="false"
         :width="propData.drawerWidth"
         :visible="drawerObj.visible"
         @close="drawerObj.visible = false"
@@ -164,8 +165,8 @@ export default {
       propData: this.$root.propData.compositeAttr || {
         width: '100%',
         height: '100%',
-        drawerWidth: '50%',
-        drawerIframeHeight: 'calc(100vh - 112px)',
+        drawerWidth: '90%',
+        drawerIframeHeight: '100%',
         tableHeight: 'calc(100vh - 90px)',
         tableContent: 'calc(100vh - 179px)',
         iframeUlBox: {
@@ -173,7 +174,7 @@ export default {
           marginRightVal: "",
           marginBottomVal: "",
           marginLeftVal: "",
-          paddingTopVal: "20px",
+          paddingTopVal: "",
           paddingRightVal: "",
           paddingBottomVal: "",
           paddingLeftVal: ""
@@ -201,7 +202,7 @@ export default {
   methods: {
     handleSetStyle() {
       let obj = {}
-      IDM.style.setBoxStyle(obj, this.propData.iframeUlBox);
+      this.propData.iframeUlBox && IDM.style.setBoxStyle(obj, this.propData.iframeUlBox);
       return {
         width:'100%',
         height: this.propData.drawerIframeHeight,
@@ -214,6 +215,8 @@ export default {
       this.drawerObj.visible = type;
     },
     handleChildJump(room, td) {
+      this.drawerObj.visible = true;
+      this.drawerObj.iframeUrl = 'http://10.1.1.106:30110/DreamWeb/ctrl/login'
       if (this.propData.handleMeetingJump && this.propData.handleMeetingJump.length > 0) {
         let name = this.propData.handleMeetingJump[0].name
         window[name] && window[name].call(this, {
@@ -481,6 +484,11 @@ export default {
   display:flex;
   justify-content:space-between;
   color:#333;
+}
+.meetingdrawer .ant-drawer-body{
+  padding: 0 !important;
+  height: 100%;
+  overflow: hidden;
 }
 </style>
 
