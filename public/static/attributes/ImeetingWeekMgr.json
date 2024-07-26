@@ -38,14 +38,6 @@
           {
             "type": "input",
             "layoutType": "inline",
-            "text": "抽屉标题",
-            "desc": "抽屉标题内容",
-            "bindKey": "drawerTile",
-            "default": "标题"
-          },
-          {
-            "type": "input",
-            "layoutType": "inline",
             "text": "抽屉宽度",
             "desc": "抽屉宽度",
             "bindKey": "drawerWidth",
@@ -58,6 +50,22 @@
             "desc": "抽屉内容的iframe高度",
             "bindKey": "drawerIframeHeight",
             "default": "calc(100vh - 112px)"
+          },
+          {
+            "type": "box",
+            "layoutType": "block",
+            "text": "iframe边距",
+            "bindKey": "iframeUlBox",
+            "default": {
+              "marginTopVal": "",
+              "marginRightVal": "",
+              "marginBottomVal": "",
+              "marginLeftVal": "",
+              "paddingTopVal": "20px",
+              "paddingRightVal": "",
+              "paddingBottomVal": "",
+              "paddingLeftVal": ""
+            }
           }
         ]
       },

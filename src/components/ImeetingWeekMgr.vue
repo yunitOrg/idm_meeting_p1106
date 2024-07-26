@@ -88,7 +88,6 @@
       <!--抽屉-->
       <a-drawer
         placement="right"
-        :title="propData.drawerTile"
         :closable="true"
         :width="propData.drawerWidth"
         :visible="drawerObj.visible"
@@ -98,7 +97,7 @@
           class="meetingdraweriframe"
           id="meetingdraweriframe"
           :src="drawerObj.iframeUrl"
-          :style="{width:'100%',height: propData.drawerIframeHeight,border: 0,outline:'none'}"></iframe>
+          :style="handleSetStyle()"></iframe>
       </a-drawer>
     </div>
   </div>
@@ -166,10 +165,19 @@ export default {
         width: '100%',
         height: '100%',
         drawerWidth: '50%',
-        drawerTile: '标题',
         drawerIframeHeight: 'calc(100vh - 112px)',
         tableHeight: 'calc(100vh - 90px)',
         tableContent: 'calc(100vh - 179px)',
+        iframeUlBox: {
+          marginTopVal: "",
+          marginRightVal: "",
+          marginBottomVal: "",
+          marginLeftVal: "",
+          paddingTopVal: "20px",
+          paddingRightVal: "",
+          paddingBottomVal: "",
+          paddingLeftVal: ""
+        },
         ulbox: {
           marginTopVal: "",
           marginRightVal: "",
@@ -191,6 +199,17 @@ export default {
     }
   },
   methods: {
+    handleSetStyle() {
+      let obj = {}
+      IDM.style.setBoxStyle(obj, this.propData.iframeUlBox);
+      return {
+        width:'100%',
+        height: this.propData.drawerIframeHeight,
+        border: 0,
+        outline:'none',
+        ...obj
+      }
+    },
     openDrawer(type) {
       this.drawerObj.visible = type;
     },
