@@ -196,7 +196,8 @@ export default {
     this.moduleObject = this.$root.moduleObject;
     this.init();
     window.ImeetingWeekMgr = {
-      requireData: this.requireData
+      requireData: this.requireData,
+      closeDrawer: this.openDrawer
     }
   },
   methods: {
@@ -215,8 +216,8 @@ export default {
       this.drawerObj.visible = type;
     },
     handleChildJump(room, td) {
-      this.drawerObj.visible = true;
-      this.drawerObj.iframeUrl = 'http://10.1.1.106:30110/DreamWeb/ctrl/login'
+      // this.drawerObj.visible = true;
+      // this.drawerObj.iframeUrl = 'http://10.1.1.106:30110/DreamWeb/ctrl/login'
       if (this.propData.handleMeetingJump && this.propData.handleMeetingJump.length > 0) {
         let name = this.propData.handleMeetingJump[0].name
         window[name] && window[name].call(this, {
