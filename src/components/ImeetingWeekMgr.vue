@@ -20,7 +20,7 @@
           <weekReport :value.sync="selectWeekObj" @handleRefresh="handleReWeekData"></weekReport>
         </div>
         <div class="meeting-right displayflex">
-          <span>说明：</span>
+          <!-- <span>说明：</span> -->
           <div class="meeting-legend displayflex">
             <div class="legend-item" v-for="(legend, l) in legendList" :key="l">
               <span
@@ -146,6 +146,11 @@ export default {
       // 图例
       legendList: [
         {
+          color: "#EB3333",
+          text: "未提交",
+          value: 4
+        },
+        {
           color: "#499BFC",
           text: "待审核",
           value: 1
@@ -159,7 +164,7 @@ export default {
           color: "#B8B8B8",
           text: "已过期",
           value: 3
-        }
+        },
       ],
       moduleObject: {},
       propData: this.$root.propData.compositeAttr || {
@@ -377,16 +382,16 @@ export default {
     // 计算颜色   status: 0: 红色  1 待审核 2 已占用 9 已过期
     hanldeColorBlock(meeting) {
       if (meeting.status == 0) {
-        meeting.color = '#EB3333';
+        meeting.color = this.legendList.find(item => item.value == 4).color;
         meeting.colorType = 0;
       } else if (meeting.status == 1 ) {
-        meeting.color = this.legendList[0].color;
+        meeting.color = this.legendList.find(item => item.value == 1).color;
         meeting.colorType = 1;
       } else if (meeting.status == 2) {
-        meeting.color = this.legendList[1].color;
+        meeting.color = this.legendList.find(item => item.value == 2).color;
         meeting.colorType = 2;
       } else if (meeting.status == 9) {
-        meeting.color = this.legendList[2].color;
+        meeting.color = this.legendList.find(item => item.value == 3).color;
         meeting.colorType = 9;
       }
     },
@@ -613,6 +618,9 @@ export default {
       .td-item{
         position: relative;
         &:hover{
+          // border: 1px solid #F4F5F8;
+          background-color: rgb(244 245 248 / 80%);
+          border-radius: 3px;
           .block-btn-img{
             display: block;
           }

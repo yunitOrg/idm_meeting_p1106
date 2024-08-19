@@ -5,8 +5,8 @@ export function getMeetingData() {
         currentDay: "2024-06-27",
         isShowBuilding: false,
         offDutyEndTime: '18:00',
-        showEndDate: '2024-06-27',
-        showStartDate: '2024-06-27',
+        showEndDate: '2024-08-19',
+        showStartDate: '2024-08-19',
         workingStartTime: '09:00',
         thead: [
             {
@@ -44,7 +44,7 @@ export function getMeetingData() {
               "codeName": "",
               "meetingRoomUsageData": [
                 {
-                  "satrtTime": "2024-07-22 08:00:00",
+                  "satrtTime": "2024-08-19 08:00:00",
                   "dataType": "1",
                   "mobile": "13918345255",
                   "url": "ctrl/formControl/form?listId=210607181937YJxUC5fve4y7q3SH5hJ&mId=190121161348OthBI4s3sEhvfuDJ5FD&moduleId=190121161348OthBI4s3sEhvfuDJ5FD&method=pageCheckInfo&validateByList=1&pk=2406121533329okPVfgMKYoni6BZJsC&hasMine=false&isRoomManager=false&occupyStatus=2",
@@ -55,11 +55,11 @@ export function getMeetingData() {
                   "statusText": "占用",
                   "ngr": "周东升",
                   "meetingDuring": "2024-06-27 08:00:00至2024-06-27 10:00:00",
-                  "endTime": "2024-07-22 10:00:00",
+                  "endTime": "2024-08-19 10:00:00",
                   "status": 0
                 },
                 {
-                  "satrtTime": "2024-07-22 10:30:00",
+                  "satrtTime": "2024-08-19 10:30:00",
                   "dataType": "1",
                   "mobile": "13918345255",
                   "url": "ctrl/formControl/form?listId=210607181937YJxUC5fve4y7q3SH5hJ&mId=190111184257QgSNR8cW92akDpqeWMA&moduleId=190111184257QgSNR8cW92akDpqeWMA&method=pageCheckInfo&validateByList=1&pk=2406261752315oDeMFzDQuQvXOWzBcj&hasMine=false&isRoomManager=false&occupyStatus=2",
@@ -70,7 +70,7 @@ export function getMeetingData() {
                   "statusText": "占用",
                   "ngr": "周东升",
                   "meetingDuring": "2024-06-27 10:30:00至2024-06-27 11:30:00",
-                  "endTime": "2024-07-22 11:30:00",
+                  "endTime": "2024-08-19 11:30:00",
                   "status": 3
                 },
                 {
