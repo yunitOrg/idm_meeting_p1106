@@ -38,6 +38,7 @@
           <div class="mrb10">容纳人数：{{ selectRoom.capacity }}</div>
           <div class="mrb10">可用资源：{{ selectRoom.roomResourceText }}</div>
           <div>主要用途：{{ selectRoom.mainUses }}</div>
+          <div v-html="handleMeetingRoomHtml()"></div>
         </div>
         <div class="room-info-right" v-if="selectRoom.roomPhoto">
           <img :src="IDM.url.getWebPath(selectRoom.roomPhoto)" alt="">
@@ -86,6 +87,18 @@ export default {
     }
   },
   methods: {
+    handleMeetingRoomHtml() {
+      console.log(this.selectRoom, 123)
+      let html = ''
+      if (this.propData.handleMeetingRoomDetail && this.propData.handleMeetingRoomDetail.length > 0) {
+        let name = this.propData.handleMeetingRoomDetail[0].name
+        html = window[name] && window[name].call(this, {
+          _this: this,
+          data: this.selectRoom
+        });
+      }
+      return html
+    },
     // 色块跳转
     colorJumpUrl(item) {
       this.$emit('colorJumpUrl', item)

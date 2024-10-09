@@ -160,6 +160,14 @@
             "bindKey": "handleTipsContentLockFunc",
             "desc": "接口参数：自定义函数参数：{_this: this, item: item}",
             "multiple": false
+          },
+          {
+            "type": "actionSelect",
+            "layoutType": "block",
+            "text": "按会议室申请楼详情",
+            "bindKey": "handleMeetingRoomDetail",
+            "desc": "接口参数：自定义函数参数：{_this: this, data: data}",
+            "multiple": false
           }
         ]
       }

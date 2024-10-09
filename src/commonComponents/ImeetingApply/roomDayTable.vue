@@ -1,5 +1,5 @@
 <template>
-  <div class="roomtable" ref="roomtable" :style="`height: ${propData.meetingDayHei}`">
+  <div class="roomtable" ref="roomtable" :style="`height:${setBoxHeight}`">
     <simplebarvue class="idm-meeting-room-card-wrapper">
         <!--色块-->
         <div class="idm-meeting-room-card-block-outer">
@@ -114,6 +114,7 @@ export default {
   },
   data() {
     return {
+      setBoxHeight: this.propData.meetingDayHei,
       today: moment().format("YYYY-MM-DD"),
       hourday: moment().format("HH:mm"),
       isShowBuilding: false,
@@ -238,6 +239,7 @@ export default {
     },
     // 初始化
     initTable(data) {
+      this.setBoxHeight = this.propData.meetingDayHei;
       this.roomList = []
       this.theadList = []
       this.blockList = []
@@ -251,15 +253,17 @@ export default {
       this.startTime && this.endTime && this.initThead()
       // 初始化会议室 计算色块
       this.theadList.length > 0 && this.initRoom()
-      let tableHeight = this.handleDomHeight({height: 'calc(100vh - 230px)'});
+      let tableHeight = this.handleDomHeight({height: this.propData.meetingDayHei});
       let td = this.$refs.table?.querySelector('td')
       let realTableHeight = (this.roomList.length + 1) * td.offsetHeight
       if (realTableHeight <= tableHeight.height) {
-        let dom = this.$refs.roomtable;
-        dom.style.height = realTableHeight + 'px'
+        // let dom = this.$refs.roomtable;
+        // dom.style.height = `${realTableHeight}px`
+        this.setBoxHeight = `${realTableHeight}px`
       } else {
-        let dom = this.$refs.roomtable;
-        dom.style.height = 'calc(100vh - 230px)';
+        this.setBoxHeight = this.propData.meetingDayHei;
+        // let dom = this.$refs.roomtable;
+        // dom.style.height = this.propData.meetingDayHei;
       }
       // 渲染色块
       this.blockList.length > 0 && this.initBlock();

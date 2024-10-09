@@ -1,5 +1,5 @@
 <template>
-  <div class="weekTable" :style="`height: ${propData.meetingWeekHei}`">
+  <div class="weekTable" ref="weekTable" :style="`height:${setBoxHeight}`">
     <simplebarvue class="idm-meeting-room-card-wrapper">
       <!--色块-->
       <div class="idm-meeting-room-card-block-outer">
@@ -162,6 +162,7 @@ export default {
   mixins: [ImeetingApply],
   data() {
     return {
+      setBoxHeight: this.propData.meetingWeekHei,
       isShowBuilding: false,
       timeVisible: {
         show: false,
@@ -447,14 +448,12 @@ export default {
             let start = td.start;
             let end = td.end;
             const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
-            console.log(url, room, td, 8888)
             window.open(url)
           }
         } else {
           let start = td.start;
           let end = td.end;
           const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
-          console.log(url, room, td, 8888)
           window.open(url)
         }
       } catch(e) {
@@ -466,7 +465,22 @@ export default {
       let { start, end } = obj
       return moment(end).isBefore(moment().format("YYYY-MM-DD HH:mm"))
     },
+    handleDomHeight({height}) {
+      let span = document.createElement('span')
+      let result = {}
+      result.width = span.offsetWidth;
+      result.height = span.offsetHeight;
+      span.style.display = 'inline-block';
+      span.style.visibility = 'hidden';
+      span.style.height = height
+      document.body.appendChild(span)
+      result.width = span.offsetWidth
+      result.height = span.offsetHeight;
+      span.parentNode?.removeChild(span)
+      return result
+    },
     initTable(weekListTable) {
+      this.setBoxHeight = this.propData.meetingWeekHei;
       this.roomList = [];
       this.theadList = [];
       this.noon = [];
@@ -482,6 +496,21 @@ export default {
       this.initThead()
       // 计算色块
       this.initRoom()
+      let tableHeight = this.handleDomHeight({height: this.propData.meetingWeekHei});
+      this.$nextTick(() => {
+        let td = this.$refs.table?.querySelector('.td-room')
+        let theadtd = this.$refs.table?.querySelector('.td-name')
+        let realTableHeight = (this.roomList.length) * td.offsetHeight
+        if (realTableHeight <= tableHeight.height) {
+          // let dom = this.$refs.weekTable;
+          // dom.style.height = `${realTableHeight}px`
+          this.setBoxHeight = `${realTableHeight+theadtd.offsetHeight}px`
+        } else {
+          this.setBoxHeight = this.propData.meetingWeekHei;
+          // let dom = this.$refs.weekTable;
+          // dom.style.height = this.propData.meetingWeekHei;
+        }
+      })
       // 渲染色块
       this.initBlock()
     },
