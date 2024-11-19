@@ -115,7 +115,7 @@ export default {
       // 图例
       legendList: [
         {
-          color: "#EEEEEE",
+          color: "#cccccc",
           text: "占用",
           value: 3
         },
