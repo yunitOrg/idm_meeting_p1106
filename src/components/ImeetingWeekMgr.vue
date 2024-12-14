@@ -203,6 +203,31 @@ export default {
     window.ImeetingWeekMgr = {
       requireData: this.requireData,
       closeDrawer: this.openDrawer
+    },
+    window.handleSeblock = (row) => {
+      this.drawerObj.iframeUrl = "";
+      if (this.propData.handleMeetingBlockJump && this.propData.handleMeetingBlockJump.length > 0) {
+        let name = this.propData.handleMeetingBlockJump[0].name
+        window[name] && window[name].call(this, {
+          _this: this,
+          data: row
+        });
+      }
+    }
+    // 调用socket关闭抽屉
+    let sokect = top.dreamSocketClient;
+    let _that = this;
+    sokect.onmessage = function (evn) {
+      if(evn.data != 'pong'){
+        let data = evn.data && JSON.parse(evn.data)
+        if (data.badgeType == "closeMeetingApplyForm") {
+          let result = data.data || {};
+          let open = result.open
+          if (!open) {
+            _that.openDrawer(false)
+          }
+        }
+      }
     }
   },
   methods: {
@@ -223,6 +248,7 @@ export default {
     handleChildJump(room, td) {
       // this.drawerObj.visible = true;
       // this.drawerObj.iframeUrl = 'http://10.1.1.106:30110/DreamWeb/ctrl/login'
+      this.drawerObj.iframeUrl = ""
       if (this.propData.handleMeetingJump && this.propData.handleMeetingJump.length > 0) {
         let name = this.propData.handleMeetingJump[0].name
         window[name] && window[name].call(this, {
@@ -236,6 +262,7 @@ export default {
     },
     // 会议室申请跳转url
     handleJumpUrl() {
+      this.drawerObj.iframeUrl = ""
       if (this.propData.handleJump && this.propData.handleJump.length > 0) {
         let name = this.propData.handleJump[0].name
         window[name] && window[name].call(this, {
@@ -314,7 +341,6 @@ export default {
       this.theadCopyList = [];
       this.roomList = [];
       this.blockList = [];
-      
       this.allData = data;
       this.workStar = data.workingStartTime;
       this.workEnd = data.offDutyEndTime;
@@ -353,12 +379,25 @@ export default {
           } else if (item.colorType == 0) {
             bgcolor = '#FEF5F5'
           }
-          // let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
-          let str = `<div class="block-center" style='background-color:${bgcolor};'>
+          let jsonitem = JSON.stringify(item).replace(/\"/g, "'");
+          let startTime = start, endTime = end;
+          if (!item.isTimeSame) {
+            if (item.sametime == "start") {
+              startTime = start
+              endTime = end
+            } else if (item.sametime == "middle") {
+              startTime = this.workStar
+              endTime = this.workEnd
+            } else if (item.sametime == "end") {
+              startTime = start
+              endTime = end
+            }
+          }
+          let str = `<div class="block-center" style='background-color:${bgcolor};cursor:pointer;' onClick="handleSeblock(${jsonitem})">
               <div style="width:30%;display:flex;flex-direction:column;align-items:center;justify-content:space-around;">
-                <span>${start}</span>
+                <span>${startTime}</span>
                 <span>|</span>
-                <span>${end}</span>
+                <span>${endTime}</span>
               </div>
               <div style="border-left: 3px solid ${item.color};margin-left:5px;padding-left:10px;display:flex;flex-direction:column;justify-content:space-between;color:#333;width:70%;">
                 <div style="word-wrap:break-word;">${item.bt}</div>
@@ -405,6 +444,7 @@ export default {
       meetingStart = moment(meetingStart, "YYYY-MM-DD HH:mm"); //会议开始时间
       let meetingEnd = meeting.endTime;
       meetingEnd = moment(meetingEnd, "YYYY-MM-DD HH:mm"); //会议结束时间
+      let startdd = ''
       this.theadCopyList.forEach((section, i) => {
         //时间段开始时间
         const sectionStart = moment(
@@ -417,6 +457,17 @@ export default {
           "YYYY-MM-DD HH:mm"
         );
         const addfunc = (meeting, params) =>  {
+          startdd = 'start';
+          // 跨天了
+          if (!meeting.isTimeSame) {
+            meeting.sametime = "middle"
+            if (moment(section.day, "YYYY-MM-DD").isSame(moment(meeting.satrtTime, "YYYY-MM-DD"))) {
+              meeting.sametime = 'start'
+            }
+            if (moment(section.day, "YYYY-MM-DD").isSame(moment(meeting.endTime, "YYYY-MM-DD"))) {
+              meeting.sametime = "end"
+            }
+          }
           let obj = Object.assign({}, meeting, params)
           this.hanldeColorBlock(obj)
           this.blockList.push(obj);
@@ -434,6 +485,8 @@ export default {
         this.roomList.forEach((room, ri) => {
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
             room.meetingRoomUsageData.forEach(meeting => {
+              let flag = moment(meeting.satrtTime, "MM/D/YYYY").isSame(moment(meeting.endTime, "MM/D/YYYY"), 'day')
+              meeting.isTimeSame = flag
               meeting.room = `${room.roomClass}${room.roomName}`
               meeting.roomId = room.roomId;
               meeting.roomName = room.roomName;
