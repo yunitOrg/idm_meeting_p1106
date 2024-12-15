@@ -91,7 +91,7 @@ export default {
       let week = this.search.week
       let chooseWeek = this.weekList[week-1]
       let comtime = ''
-      if (flag == 'right') {
+      if (flag == 'right' || flag == "seeleft") {
         if (moment(`${this.search.year}-01-01`, "YYYY-MM-DD").isBefore(moment(this.search.year +'-'+ chooseWeek.start, 'YYYY-MM-DD'))) {
           comtime = this.search.year - 1
         }
@@ -132,7 +132,11 @@ export default {
       } else {
         if (this.search.week > 1) {
           this.search.week = Number(this.search.week - 1)
-          this.emitValue()
+          if (this.search.week == 1) {
+            this.emitValue("seeleft")
+          } else {
+            this.emitValue()
+          }
         } else {
           this.search.year = Number(this.search.year)- 1
           this.handleCurrentTime()

@@ -214,20 +214,24 @@ export default {
         });
       }
     }
-    // 调用socket关闭抽屉
-    let sokect = top.dreamSocketClient;
-    let _that = this;
-    sokect.onmessage = function (evn) {
-      if(evn.data != 'pong'){
-        let data = evn.data && JSON.parse(evn.data)
-        if (data.badgeType == "closeMeetingApplyForm") {
-          let result = data.data || {};
-          let open = result.open
-          if (!open) {
-            _that.openDrawer(false)
+    try{
+      // 调用socket关闭抽屉
+      let sokect = top.dreamSocketClient;
+      let _that = this;
+      sokect.onmessage = function (evn) {
+        if(evn.data != 'pong'){
+          let data = evn.data && JSON.parse(evn.data)
+          if (data.badgeType == "closeMeetingApplyForm") {
+            let result = data.data || {};
+            let open = result.open
+            if (!open) {
+              _that.openDrawer(false)
+            }
           }
         }
       }
+    }catch(e) {
+      console.log(e, "sokect")
     }
   },
   methods: {
@@ -277,6 +281,7 @@ export default {
       return moment(moment().format('YYYY-MM-DD')).isSame(moment(day))
     },
     handleReWeekData() {
+      console.log(this.selectWeekObj, 111)
       this.requireData()
     },
      /**
