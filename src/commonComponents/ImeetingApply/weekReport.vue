@@ -54,13 +54,13 @@ const getAllWeekOfYear = function(year) {
   while (currentMoment.isBefore(moment([year]).endOf('year'))) {
     let weekStart = currentMoment.clone().startOf('isoWeek'); // 周的开始日期
     let weekEnd = currentMoment.clone().endOf('isoWeek'); // 周的结束日期
-    if (weekEnd.format('YYYY') != year) {
-      break
-    }
+    // if (weekEnd.format('YYYY') != year) {
+    //   break
+    // }
     weeks.push({
       index: i,
       week: `第${i}周`,
-      weekStag: `${weekStart.format('M-D')}~${weekEnd.format('M-D')}`,
+      weekStag: `${weekStart.format('M.D')}~${weekEnd.format('M.D')}`,
       start: weekStart.format('MM-DD'),
       end: weekEnd.format('MM-DD'),
       check:  moment(moment().format("YYYY-MM-DD")).isBetween(moment(weekStart.format('YYYY-MM-DD')), moment(weekEnd.format('YYYY-MM-DD')), null, '[]')
@@ -82,8 +82,8 @@ export default {
     }
   },
   mounted() {
-    this.search.year = new Date().getFullYear()
-    this.search.week = this.weekList.find(k=>k.check).index
+    this.search.year = new Date().getFullYear();
+    this.search.week = (this.weekList.find(k=>k.check) || {}).index
     this.emitValue()
   },
   methods: {
