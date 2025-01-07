@@ -36,16 +36,16 @@
           <div class="room-info-title">{{ selectRoom.roomName }}</div>
           <div class="mrb10">可用面积：{{ selectRoom.area }}</div>
           <div class="mrb10">容纳人数：{{ selectRoom.capacity }}</div>
-          <div class="mrb10">可用资源：{{ selectRoom.roomResourceText }}</div>
-          <div>主要用途：{{ selectRoom.mainUses }}</div>
-          <div v-html="handleMeetingRoomHtml()"></div>
+          <div class="mrb10 desc">可用资源：{{ selectRoom.roomResourceText }}</div>
+          <div class="desc" :title="selectRoom.mainUses">主要用途：{{ selectRoom.mainUses }}</div>
+          <div class="metdesc" v-html="handleMeetingRoomHtml()"></div>
         </div>
-        <div class="room-info-right" v-if="selectRoom.roomPhoto">
-          <img :src="IDM.url.getWebPath(selectRoom.roomPhoto)" alt="">
+        <div class="room-info-right">
+          <img :src="getImageUrl(selectRoom.roomPhoto)" alt="" />
         </div>
       </div>
     </div>
-    <div class="textalign mtb10">
+    <div class="textalign">
       <weekReport :value.sync="selectTime" @handleRefresh="handleRefresh"></weekReport>
     </div>
     <div>
@@ -83,12 +83,20 @@ export default {
       // 轮播图
       roomSwiper: [],
       // 选中会议室
-      selectRoom: {}
+      selectRoom: {
+        roomPhoto: ""
+      }
     }
   },
   methods: {
+    getImageUrl(url) {
+      if (url) {
+        return IDM.url.getWebPath(url)
+      } else {
+        return IDM.url.getModuleAssetsWebPath(require(`../../assets/default.jpg`), this.moduleObject)
+      }
+    },
     handleMeetingRoomHtml() {
-      console.log(this.selectRoom, 123)
       let html = ''
       if (this.propData.handleMeetingRoomDetail && this.propData.handleMeetingRoomDetail.length > 0) {
         let name = this.propData.handleMeetingRoomDetail[0].name
@@ -171,6 +179,7 @@ export default {
 <style lang="scss" scoped>
 .meetingroom{
   .textalign{
+    margin: 20px 0 10px;
     display: flex;
     justify-content: center;
   }
@@ -283,7 +292,7 @@ export default {
     width: 710px;
     height: 210px;
     padding-left: 30px;
-    padding-top: 50px;
+    padding-top: 40px;
     box-sizing: border-box;
     background-color: #fff;
     display: flex;
@@ -297,6 +306,18 @@ export default {
       width: 330px;
       height: 210px;
       display: inline-block;
+      .desc{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .metdesc{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
     .room-info-title{
       font-size: 18px;

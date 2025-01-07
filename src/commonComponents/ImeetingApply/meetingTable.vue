@@ -394,13 +394,14 @@ export default {
       })
     },
     showTimeTd(td, index) {
-      const m = td.start.slice(3);
-      if (m === "00") {
-        return td.start;
-      }
-      if (m === "30") {
-        return '';
-      }
+      return td.start
+      // const m = td.start.slice(3);
+      // if (m === "00") {
+      //   return td.start;
+      // }
+      // if (m === "30") {
+      //   return '';
+      // }
     }
   }
 }
@@ -499,6 +500,9 @@ export default {
       background: #f9fcfe;
     }
     .td-room{
+      position: sticky;
+      left: 0;
+      z-index: 999;
       user-select: none;
       pointer-events: none;
       background-color: #f9fcfe;

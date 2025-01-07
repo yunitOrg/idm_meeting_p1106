@@ -90,15 +90,19 @@ export default {
     emitValue(flag) {
       let week = this.search.week
       let chooseWeek = this.weekList[week-1]
-      let comtime = ''
-      if (flag == 'right' || flag == "seeleft") {
-        if (moment(`${this.search.year}-01-01`, "YYYY-MM-DD").isBefore(moment(this.search.year +'-'+ chooseWeek.start, 'YYYY-MM-DD'))) {
-          comtime = this.search.year - 1
+      let obj = {
+        start: this.search.year +'-'+ chooseWeek.start,
+        end: this.search.year +'-'+ chooseWeek.end
+      }
+      if (week == 1) {
+        if (moment(`${this.search.year}-${chooseWeek.start}`, "YYYY-MM-DD").isAfter(moment(`${this.search.year}-${chooseWeek.end}`, "YYYY-MM-DD"))) {
+          obj.start = this.search.year - 1 + "-" + chooseWeek.start
         }
       }
-      let obj = {
-        start: (comtime || this.search.year) +'-'+ chooseWeek.start,
-        end: this.search.year +'-'+ chooseWeek.end
+      if (week == this.weekList.length) {
+        if (moment(`${this.search.year}-${chooseWeek.start}`, "YYYY-MM-DD").isAfter(moment(`${this.search.year}-${chooseWeek.end}`, "YYYY-MM-DD"))) {
+          obj.end = this.search.year + 1 + "-" + chooseWeek.end
+        }
       }
       this.$emit('update:value', obj)
     },
@@ -132,11 +136,7 @@ export default {
       } else {
         if (this.search.week > 1) {
           this.search.week = Number(this.search.week - 1)
-          if (this.search.week == 1) {
-            this.emitValue("seeleft")
-          } else {
-            this.emitValue()
-          }
+          this.emitValue()
         } else {
           this.search.year = Number(this.search.year)- 1
           this.handleCurrentTime()
