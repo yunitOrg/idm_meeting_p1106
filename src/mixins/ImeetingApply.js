@@ -76,6 +76,7 @@ export default {
       this.claerMouseClass()
       this.mouseChooseAry = []
       this.mouseFlag = true
+      this.mouseupFlag = false;
       let start = e.target.getAttribute('start');
       let end = e.target.getAttribute('end');
       this.chooseTime.room = room
@@ -92,6 +93,7 @@ export default {
     // 鼠标移动
     handleTrMouseMove(e) {
       if (this.mouseFlag) {
+        this.mouseupFlag = true;
         let start = e.target.getAttribute('start');
         let end = e.target.getAttribute('end');
         if (this.showTips({start, end})) {
@@ -107,10 +109,10 @@ export default {
     },
     // 鼠标抬起
     handleTrMouseUp(e) {
-      this.mouseFlag = false;
       if (this.chooseTime.start) {
-        this.handleClickTd(this.chooseTime.room, this.chooseTime)
+        this.handleClickTdMouse(this.chooseTime.room, this.chooseTime)
       }
+      this.mouseFlag = false;
     },
     handleCell(obj) {
       let {startX, endX} = obj

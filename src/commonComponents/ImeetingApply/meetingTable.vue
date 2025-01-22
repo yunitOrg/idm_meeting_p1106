@@ -104,6 +104,7 @@ export default {
       startHourTime: '',
       // 结束小时时间
       endHourTime: '',
+      mouseupFlag: false,
       // 开始时间
       startTime: '',
       // 结束时间
@@ -171,6 +172,46 @@ export default {
     },
     // 点击td
     async handleClickTd(room, td) {
+      if (this.mouseupFlag) {
+        return
+      }
+      try{
+        if (this.showTips({start: td.start})) return
+
+        let moduleId  = '190111184257QgSNR8cW92akDpqeWMA';
+        if(IDM.url.queryString("type")=="hysyd"){
+          moduleId = "1905311647221BSf1doWPYLsr8nAdqB";
+        }
+        this.jumpParams = {}
+        this.orgId = ''
+        let res = await API.ApiMeetingAllDept({moduleId: moduleId})
+        if (res.code == '200') {
+          let data = res.data || []
+          if (data && data.length > 1) {
+            this.radioAry = data;
+            this.orgId = data[0].id
+            this.jumpParams = {room, td}
+            this.visible = true
+          } else {
+            let start = td.start
+            let end = td.end
+            let room = this.selectRoom
+            const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+            window.open(url)
+          }
+        } else {
+          let start = td.start
+          let end = td.end
+          let room = this.selectRoom
+          const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+          window.open(url)
+        }
+      } catch(e) {
+        console.log(e)
+      }
+    },
+    // 点击td
+    async handleClickTdMouse(room, td) {
       try{
         if (this.showTips({start: td.start})) return
 

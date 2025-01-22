@@ -164,6 +164,7 @@ export default {
     return {
       setBoxHeight: this.propData.meetingWeekHei,
       isShowBuilding: false,
+      mouseupFlag: false,
       timeVisible: {
         show: false,
         width: '',
@@ -416,6 +417,54 @@ export default {
     // },
     // 点击td
     async handleClickTd(room, td, flag) {
+      if (this.mouseupFlag) {
+        return
+      }
+      try{
+        if (!flag) {
+          if (this.showTips({end: td.end})) return
+
+          if (this.handleIsClick(td.start)) {
+            message.config({
+              duration: 1,
+              top: '50%'
+            })
+            message.error("不能预定当前时间以前的会议!")
+            return
+          }
+        }
+
+        this.jumpParams = {}
+        this.orgId = ''
+        let moduleId  = '190111184257QgSNR8cW92akDpqeWMA';
+        if(IDM.url.queryString("type")=="hysyd"){
+          moduleId = "1905311647221BSf1doWPYLsr8nAdqB";
+        }
+        let res = await API.ApiMeetingAllDept({moduleId: moduleId})
+        if (res.code == '200') {
+          let data = res.data || []
+          if (data && data.length > 1) {
+            this.radioAry = data;
+            this.orgId = data[0].id
+            this.jumpParams = {room, td}
+            this.visible = true
+          } else {
+            let start = td.start;
+            let end = td.end;
+            const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+            window.open(url)
+          }
+        } else {
+          let start = td.start;
+          let end = td.end;
+          const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+          window.open(url)
+        }
+      } catch(e) {
+        console.log(e)
+      }
+    },
+    async handleClickTdMouse(room, td, flag) {
       try{
         if (!flag) {
           if (this.showTips({end: td.end})) return

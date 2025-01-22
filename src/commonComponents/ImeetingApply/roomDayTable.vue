@@ -119,6 +119,7 @@ export default {
       hourday: moment().format("HH:mm"),
       isShowBuilding: false,
       startTime: '',
+      mouseupFlag: false,
       endTime: '',
       room: [],
       // 会议室
@@ -176,6 +177,7 @@ export default {
           this.visible = false;
           this.confirmLoading = false;
         }, 200);
+        this.claerMouseClass()
         window.open(url)
       } catch(e) {}
     },
@@ -185,6 +187,9 @@ export default {
     },
     // 点击td
     async handleClickTd(room, td) {
+      if (this.mouseupFlag) {
+        return
+      }
       try{
         if (this.showTips({start: td.start})) return
 
@@ -206,12 +211,51 @@ export default {
             let start = td.start;
             let end = td.end;
             const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+            this.claerMouseClass()
             window.open(url)
           }
         } else {
           let start = td.start;
           let end = td.end;
           const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+          this.claerMouseClass()
+           window.open(url)
+        }
+      } catch(e) {
+        console.log(e)
+      }
+    },
+    // 点击td
+    async handleClickTdMouse(room, td) {
+      try{
+        if (this.showTips({start: td.start})) return
+
+        let moduleId  = '190111184257QgSNR8cW92akDpqeWMA';
+        if(IDM.url.queryString("type")=="hysyd"){
+          moduleId = "1905311647221BSf1doWPYLsr8nAdqB";
+        }
+        this.jumpParams = {}
+        this.orgId = ''
+        let res = await API.ApiMeetingAllDept({moduleId: moduleId})
+        if (res.code == '200') {
+          let data = res.data || []
+          if (data && data.length > 1) {
+            this.radioAry = data;
+            this.orgId = data[0].id
+            this.jumpParams = {room, td}
+            this.visible = true
+          } else {
+            let start = td.start;
+            let end = td.end;
+            const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+            this.claerMouseClass()
+            window.open(url)
+          }
+        } else {
+          let start = td.start;
+          let end = td.end;
+          const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
+          this.claerMouseClass()
           window.open(url)
         }
       } catch(e) {
