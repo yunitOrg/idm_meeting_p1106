@@ -22,8 +22,8 @@
           <thead>
               <tr class="table-time-bar">
                 <template v-if="isShowBuilding">
-                  <td ref="tableTdStyle" class="td-namesignle"><span>会议室类型</span></td>
-                  <td ref="tableTdName" class="td-namesignle"><span>会议室名称</span></td>
+                    <td ref="tableTdStyle" class="td-namesignle"><span>会议室类型</span></td>
+                    <td ref="tableTdName" class="td-namesignle tdsignleleft"><span>会议室名称</span></td>
                 </template>
                 <template v-else>
                   <td ref="tableTdName" class="td-name"><span>会议室名称</span></td>
@@ -42,11 +42,11 @@
               @mousemove="handleTrMouseMove"
               @mouseup="handleTrMouseUp">
               <template v-if="isShowBuilding">
-                <td class="td-room"><span>{{ room.roomClass }}</span></td>
-                <td class="td-room"><span>{{ room.roomName }}</span></td>
+                <td class="td-room"><span :title="room.roomClass">{{ room.roomClass }}</span></td>
+                <td class="td-room tdroomflex"><span :title="room.roomName">{{ room.roomName }}</span></td>
               </template>
               <template v-else>
-                <td class="td-room"><span>{{ room.roomClass }} {{ room.roomName }}</span></td>
+                <td class="td-room"><span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomName }}</span></td>
               </template>
               <td v-for="(td, t) in theadList"
                 :key="t"
@@ -407,10 +407,11 @@ export default {
     // 初始化会议室
     initRoom() {
       if (this.room && this.room.length > 0) {
-        this.roomList = this.room
+        this.roomList = this.room;
         // 色块
         this.blockList = []
         this.roomList.forEach((room, ri) => {
+          room.roomName = room.roomName && room.roomName.slice(0, 6)
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
             room.meetingRoomUsageData.forEach(meeting => {
               let meetingStart = meeting.satrtTime;
@@ -621,6 +622,9 @@ export default {
         // border-right: 1px solid #ddd;
       }
     }
+    .tdsignleleft{
+      left: 120px;
+    }
     .td-time {
       height: 50px;
       line-height: 50px;
@@ -645,13 +649,23 @@ export default {
       left: 0;
       background-color: #f9fcfe;
       z-index: 1;
+      overflow: hidden;
       span {
         display: inline-block;
         width: 100%;
         height: 100%;
         line-height: 50px;
+        white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        // display: flex;
+        // align-items: center;
+        // justify-content: center;
         // border-right: 1px solid #ddd;
       }
+    }
+    .tdroomflex{
+      left: 120px;
     }
     .td-item{
       position: relative;
