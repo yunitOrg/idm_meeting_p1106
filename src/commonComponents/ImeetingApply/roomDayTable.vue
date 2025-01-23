@@ -42,11 +42,17 @@
               @mousemove="handleTrMouseMove"
               @mouseup="handleTrMouseUp">
               <template v-if="isShowBuilding">
-                <td class="td-room"><span :title="room.roomClass">{{ room.roomClass }}</span></td>
-                <td class="td-room tdroomflex"><span :title="room.roomName">{{ room.roomName }}</span></td>
+                <td class="td-room" :title="room.roomClass">
+                  <span :title="room.roomClass">{{ room.roomClass }}</span>
+                </td>
+                <td class="td-room tdroomflex" :title="room.roomName">
+                  <span :title="room.roomName">{{ room.roomNamecopy }}</span>
+                </td>
               </template>
               <template v-else>
-                <td class="td-room"><span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomName }}</span></td>
+                <td class="td-room" :title="`${room.roomClass} ${room.roomName}`">
+                  <span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomNamecopy }}</span>
+                </td>
               </template>
               <td v-for="(td, t) in theadList"
                 :key="t"
@@ -411,7 +417,7 @@ export default {
         // 色块
         this.blockList = []
         this.roomList.forEach((room, ri) => {
-          room.roomName = room.roomName && room.roomName.slice(0, 6)
+          room.roomNamecopy = room.roomName && room.roomName.slice(0, 6)
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
             room.meetingRoomUsageData.forEach(meeting => {
               let meetingStart = meeting.satrtTime;
@@ -643,7 +649,7 @@ export default {
     }
     .td-room{
       user-select: none;
-      pointer-events: none;
+      // pointer-events: none;
       width: 188px;
       position: sticky;
       left: 0;
