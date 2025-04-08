@@ -456,7 +456,7 @@ export default {
         const tdWidth = tableEle.offsetWidth - sum;
         const sectionWidth = tdWidth / this.theadList.length;
         
-        let tdHeight = tableEle && tableEle.querySelector('td').offsetHeight;
+        let tdHeight = tableEle && tableEle.querySelector('td').clientHeight + parseFloat(window.getComputedStyle(tableEle.querySelector('td')).borderWidth)*2;
         
         this.blockList.forEach((block, index) => {
           const styleObject = {};
