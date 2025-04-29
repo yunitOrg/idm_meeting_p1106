@@ -30,8 +30,9 @@
           <tr class="room-sticky1" v-if="Array.isArray(theadList) && theadList.length>0">
             <template v-for="(td) in theadList">
               <td v-for="(noon, i) in td.noon" class="td-noon" :key="i+getUniqueId()">
-                <img :src="hadnleforeNoon()" alt="" v-if="!i%2">
-                <img :src="hadnleafterNoon()" alt="" v-else>
+                <img :src="hadnleforeNoon()" alt="" v-if="i==0">
+                <img :src="hadnleafterNoon()" alt="" v-if="i==1">
+                <img :src="hadnlPm2Noon()" alt="" v-if="i==2">
                 {{ noon.value }}
               </td>
             </template>
@@ -91,7 +92,7 @@
       </a-radio-group>
     </a-modal>
     <!--时间弹框-->
-    <!-- <a-modal
+    <a-modal
       title="时间段"
       :width="timeVisible.width"
       class="weekdialog"
@@ -138,7 +139,7 @@
           </a-tooltip>
         </div>
       </table>
-    </a-modal> -->
+    </a-modal>
   </div>
 </template>
 
@@ -382,6 +383,9 @@ export default {
     },
     hadnleafterNoon() {
       return IDM.url.getModuleAssetsWebPath(require('../../assets/pm.jpg'), this.moduleObject)
+    },
+    hadnlPm2Noon() {
+      return IDM.url.getModuleAssetsWebPath(require('../../assets/pm2.png'), this.moduleObject)
     },
     handleOk() {
       this.confirmLoading = true;
