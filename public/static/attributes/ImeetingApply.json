@@ -130,6 +130,14 @@
         "helpUrl": "",
         "children": [
           {
+            "type": "input",
+            "layoutType": "block",
+            "text": "设置周查看晚上时间",
+            "bindKey": "WeekNightTime",
+            "desc": "事件格式为：18:00 (HH:mm), 默认为18:00",
+            "default": "18:00"
+          },
+          {
             "type": "actionSelect",
             "layoutType": "block",
             "text": "我的申请链接",
