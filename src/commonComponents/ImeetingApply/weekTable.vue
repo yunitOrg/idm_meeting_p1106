@@ -18,7 +18,7 @@
             <template v-else>
               <td ref="tableTdName" class="td-name" rowspan="2">会议室名称</td>
             </template>
-            <td class="td-time" v-for="(td, t) in theadList" :key="t" colspan="2" :class="{
+            <td class="td-time" v-for="(td, t) in theadList" :key="t" :colspan="isWorkEndOver18? 3:2" :class="{
               'holiday': t>=5
             }">
               <div>星期{{ weekCn[t] }}</div>
@@ -182,6 +182,8 @@ export default {
       workStar: '',
       // 工作 结束时间
       workEnd: '',
+      //是否工作结束时间超过了18点
+      isWorkEndOver18: false,
       // 会议室
       roomList: [],
       // 头部
@@ -577,10 +579,27 @@ export default {
                   end: start.format('YYYY-MM-DD') + " " + '13:00'
                 })
               } else {
-                this.theadTimeList.push({
-                  start: start.format('YYYY-MM-DD') + " " + '13:00',
-                  end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                })
+                if(this.isWorkEndOver18==false){
+                  this.theadTimeList.push({
+                    start: start.format('YYYY-MM-DD') + " " + '13:00',
+                    end: start.format('YYYY-MM-DD') + " " + this.workEnd
+                  })
+                  
+                }else{
+                  if(index==1){
+                    this.theadTimeList.push({
+                      start: start.format('YYYY-MM-DD') + " " + '13:00',
+                      end: start.format('YYYY-MM-DD') + " " + '18:00'
+                    })
+                  }
+                  if(index==2){
+                    this.theadTimeList.push({
+                      start: start.format('YYYY-MM-DD') + " " + '18:00',
+                      end: start.format('YYYY-MM-DD') + " " + this.workEnd
+                    })
+                  }
+                }
+                
               }
           })
           start = moment(start).add(1, 'days')
@@ -594,10 +613,26 @@ export default {
                   end: start.format('YYYY-MM-DD') + " " + '13:00'
                 })
               } else {
-                this.theadTimeList.push({
-                  start: start.format('YYYY-MM-DD') + " " + '13:00',
-                  end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                })
+                if(this.isWorkEndOver18==false){
+                  this.theadTimeList.push({
+                    start: start.format('YYYY-MM-DD') + " " + '13:00',
+                    end: start.format('YYYY-MM-DD') + " " + this.workEnd
+                  })
+                  
+                }else{
+                  if(index==1){
+                    this.theadTimeList.push({
+                      start: start.format('YYYY-MM-DD') + " " + '13:00',
+                      end: start.format('YYYY-MM-DD') + " " + '18:00'
+                    })
+                  }
+                  if(index==2){
+                    this.theadTimeList.push({
+                      start: start.format('YYYY-MM-DD') + " " + '18:00',
+                      end: start.format('YYYY-MM-DD') + " " + this.workEnd
+                    })
+                  }
+                }
               }
           })
           start = moment(start).add(1, 'days')
@@ -608,10 +643,26 @@ export default {
     initThead() {
       let start =  moment(this.startTime, "YYYY-MM-DD");
       let end = moment(this.endTime, "YYYY-MM-DD");
-      this.noon = [
-          {time: `${this.workStar}-13:00`, value: '上午'},
-          {time: `13:00-${this.workEnd}`, value: '下午'}
-      ]
+      //判断this.workEnd是否在18点以后，则分为上午、下午、晚上三个时间段，否则分为上午、晚上两个时间段。
+      if (moment(this.workEnd, "HH:mm").isAfter(moment('18:00', "HH:mm"))==false) {
+        this.isWorkEndOver18=false
+          this.noon = [
+              {time: `${this.workStar}-13:00`, value: '上午'},
+              {time: `13:00-${this.workEnd}`, value: '下午'}
+          ]
+      } else {
+        this.isWorkEndOver18=true
+          this.noon = [
+            {time: `${this.workStar}-13:00`, value: '上午'},
+            {time: `13:00-18:00`, value: '下午'},
+            {time: `18:00-${this.workEnd}`, value: '晚上'}
+          ]
+      }
+
+      // this.noon = [
+      //     {time: `${this.workStar}-13:00`, value: '上午'},
+      //     {time: `13:00-${this.workEnd}`, value: '下午'}
+      // ]
       if (start.isBefore(end) || start.isSame(end)) {
         while (start.isBefore(end) || start.isSame(end)) {
           this.theadList.push({
@@ -753,6 +804,7 @@ export default {
     },
     // 初始化会议室
     initRoom() {
+
       if (this.roomList && this.roomList.length > 0) {
         this.roomList.forEach((room, ri) => {
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
