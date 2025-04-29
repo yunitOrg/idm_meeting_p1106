@@ -601,12 +601,12 @@ export default {
                   if(index==1){
                     this.theadTimeList.push({
                       start: start.format('YYYY-MM-DD') + " " + '13:00',
-                      end: start.format('YYYY-MM-DD') + " " + '18:00'
+                      end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime
                     })
                   }
                   if(index==2){
                     this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + '18:00',
+                      start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime,
                       end: start.format('YYYY-MM-DD') + " " + this.workEnd
                     })
                   }
@@ -635,12 +635,12 @@ export default {
                   if(index==1){
                     this.theadTimeList.push({
                       start: start.format('YYYY-MM-DD') + " " + '13:00',
-                      end: start.format('YYYY-MM-DD') + " " + '18:00'
+                      end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime
                     })
                   }
                   if(index==2){
                     this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + '18:00',
+                      start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime,
                       end: start.format('YYYY-MM-DD') + " " + this.workEnd
                     })
                   }
@@ -667,8 +667,8 @@ export default {
         this.isWorkEndOver18=true
           this.noon = [
             {time: `${this.workStar}-13:00`, value: '上午'},
-            {time: `13:00-18:00`, value: '下午'},
-            {time: `18:00-${this.workEnd}`, value: '晚上'}
+            {time: `13:00-${this.propData.WeekNightTime}`, value: '下午'},
+            {time: `${this.propData.WeekNightTime}-${this.workEnd}`, value: '晚上'}
           ]
       }
 
