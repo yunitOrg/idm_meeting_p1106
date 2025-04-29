@@ -2,7 +2,7 @@
   <div class="weekTable" ref="weekTable" :style="`height:${setBoxHeight}`">
     <simplebarvue class="idm-meeting-room-card-wrapper">
       <!--色块-->
-      <div class="idm-meeting-room-card-block-outer">
+      <div class="idm-meeting-room-card-block-outer" v-if="Array.isArray(blockList) && blockList.length>0">
         <div v-for="(block, b) in blockList" :key="b" class="idm-meeting-room-card-block" :style="`top:${(block.roomIndex * 50)+100}px`" @click="handleDialog(block)">
           <span class="block-main" :style="`background-color:${block.color}`"></span>
         </div>
@@ -10,7 +10,7 @@
       <!--表格-->
       <table ref="table" class="idm-meeting-room-card-table" border="1" cellspacing="0">
         <thead>
-          <tr class="room-sticky">
+          <tr class="room-sticky" >
             <template v-if="isShowBuilding">
               <td ref="tableTdStyle" class="td-name" rowspan="2">会议室类型</td>
               <td ref="tableTdName" class="td-name" rowspan="2">会议室名称</td>
@@ -18,16 +18,18 @@
             <template v-else>
               <td ref="tableTdName" class="td-name" rowspan="2">会议室名称</td>
             </template>
-            <td class="td-time" v-for="(td, t) in theadList" :key="t" :colspan="isWorkEndOver18? 3:2" :class="{
-              'holiday': t>=5
-            }">
-              <div>星期{{ weekCn[t] }}</div>
-              {{ td.day }}
-            </td>
+            <template v-if="Array.isArray(theadList) && theadList.length>0">
+              <td class="td-time"  v-for="(td, t) in theadList" :key="t" :colspan="isWorkEndOver18? 3:2" :class="{
+                'holiday': t>=5
+              }">
+                <div>星期{{ weekCn[t] }}</div>
+                {{ td.day }}
+              </td>
+            </template>
           </tr>
-          <tr class="room-sticky1">
+          <tr class="room-sticky1" v-if="Array.isArray(theadList) && theadList.length>0">
             <template v-for="(td) in theadList">
-              <td v-for="(noon, i) in td.noon" class="td-noon" :key="i">
+              <td v-for="(noon, i) in td.noon" class="td-noon" :key="i+getUniqueId()">
                 <img :src="hadnleforeNoon()" alt="" v-if="!i%2">
                 <img :src="hadnleafterNoon()" alt="" v-else>
                 {{ noon.value }}
@@ -35,7 +37,7 @@
             </template>
           </tr>
         </thead>
-        <tbody >
+        <tbody v-if="Array.isArray(roomList) && roomList.length">
           <tr v-for="(room, r) in roomList" :key="r"
             class="td-content"
             @mouseenter="handleTrMouseEnter"
@@ -65,7 +67,7 @@
         </tbody>
       </table>
     </simplebarvue>
-    <div class="idm-meeting-room-card-legend" :style="`bottom:${propData.legendBottomDis}`">
+    <div v-if="Array.isArray(legendList) && legendList.length>0" class="idm-meeting-room-card-legend" :style="`bottom:${propData.legendBottomDis}`">
       <div class="legend-item" v-for="(legend, l) in legendList" :key="l">
         <span
           class="legend-item-circle"
@@ -89,7 +91,7 @@
       </a-radio-group>
     </a-modal>
     <!--时间弹框-->
-    <a-modal
+    <!-- <a-modal
       title="时间段"
       :width="timeVisible.width"
       class="weekdialog"
@@ -136,7 +138,7 @@
           </a-tooltip>
         </div>
       </table>
-    </a-modal>
+    </a-modal> -->
   </div>
 </template>
 
@@ -224,6 +226,10 @@ export default {
     }
   },
   methods: {
+    //获取唯一值
+     getUniqueId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
+    },
     // 时间弹框 表头
     handleDialoglogic(timeObj) {
       let start = moment(timeObj.start, "HH:mm");
@@ -531,6 +537,8 @@ export default {
       return result
     },
     initTable(weekListTable) {
+      console.log(weekListTable);
+      this.isWorkEndOver18 = false;
       this.setBoxHeight = this.propData.meetingWeekHei;
       this.roomList = [];
       this.theadList = [];
@@ -638,6 +646,7 @@ export default {
           start = moment(start).add(1, 'days')
         }
       }
+      console.log(this.theadTimeList, this.theadList,"表头数据");
     },
     // 初始化表头
     initThead() {
