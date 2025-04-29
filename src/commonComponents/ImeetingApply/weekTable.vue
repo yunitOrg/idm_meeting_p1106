@@ -657,7 +657,7 @@ export default {
       let start =  moment(this.startTime, "YYYY-MM-DD");
       let end = moment(this.endTime, "YYYY-MM-DD");
       //判断this.workEnd是否在18点以后，则分为上午、下午、晚上三个时间段，否则分为上午、晚上两个时间段。
-      if (moment(this.workEnd, "HH:mm").isAfter(moment('18:00', "HH:mm"))==false) {
+      if (moment(this.workEnd, "HH:mm").isAfter(moment(this.propData.WeekNightTime, "HH:mm"))==false) {
         this.isWorkEndOver18=false
           this.noon = [
               {time: `${this.workStar}-13:00`, value: '上午'},

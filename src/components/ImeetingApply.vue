@@ -212,6 +212,7 @@ export default {
         legendBottomDis: '5px',
         meetingDayHei: 'calc(100vh - 230px)',
         meetingWeekHei: 'calc(100vh - 200px)',
+        WeekNightTime:"19:00",
         ulbox: {
           marginTopVal: "",
           marginRightVal: "",
