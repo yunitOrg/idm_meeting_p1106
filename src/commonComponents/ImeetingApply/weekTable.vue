@@ -524,7 +524,11 @@ export default {
     // 判断时间段是否已过
     showTips(obj) {
       let { start, end } = obj
-      return moment(end).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      if (!this.propData.timeControl) {
+        return moment(end).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      }else{
+        return false
+      }
     },
     handleDomHeight({height}) {
       let span = document.createElement('span')

@@ -36,7 +36,7 @@
           <tbody>
             <tr
               v-for="(room, r) in roomList"
-              :key="r"
+              :key="room.roomId +'-'+ r"
               @mouseenter="handleTrMouseEnter"
               @mousedown="(e) => handleTrMouseDown(e, room)"
               @mousemove="handleTrMouseMove"
@@ -271,7 +271,11 @@ export default {
     // 判断时间段是否已过
     showTips(obj) {
       let { start, end } = obj
-      return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      if (!this.propData.timeControl) {
+        return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      }else{
+        return false
+      }
     },
     handleDomHeight({height}) {
       let span = document.createElement('span')
@@ -417,7 +421,11 @@ export default {
         // 色块
         this.blockList = []
         this.roomList.forEach((room, ri) => {
-          room.roomNamecopy = room.roomName && room.roomName.slice(0, 6)
+          if (this.propData.showAllRoomName) {
+            room.roomNamecopy = room.roomName
+          }else{
+            room.roomNamecopy = room.roomName && room.roomName.slice(0, 6)
+          }
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
             room.meetingRoomUsageData.forEach(meeting => {
               let meetingStart = meeting.satrtTime;
@@ -438,7 +446,8 @@ export default {
             })
           }
         })
-        this.blockList = this.blockList.filter(k => k.count > 0)
+        this.blockList = this.blockList.filter(k => k.count > 0);
+        this.$forceUpdate();
       }
     },
     // 渲染色块

@@ -250,7 +250,11 @@ export default {
     // 判断时间段是否已过
     showTips(obj) {
       let { start, end } = obj
-      return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      if (!this.propData.timeControl) {
+        return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm"))
+      }else{
+        return false
+      }
     },
     // 初始化
     initTable(data, selectRoom) {

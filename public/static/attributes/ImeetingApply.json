@@ -20,6 +20,22 @@
         "desc": "提供设置组件能达到展示效果的基本属性设置信息",
         "children": [
           {
+            "type": "switch",
+            "layoutType": "inline",
+            "text": "显示完整房间名称",
+            "desc": "开启后将显示完整房间名称，关闭将切割至7个字符",
+            "bindKey": "showAllRoomName",
+            "default": false
+          },
+          {
+            "type": "switch",
+            "layoutType": "inline",
+            "text": "关闭时间限制",
+            "desc": "开启将可以任意创建，关闭将启用时间控制不允许创建",
+            "bindKey": "timeControl",
+            "default": false
+          },
+          {
             "type": "input",
             "layoutType": "inline",
             "text": "日查看",
