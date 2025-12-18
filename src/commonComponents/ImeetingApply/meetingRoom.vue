@@ -36,6 +36,7 @@
           <div class="room-info-title">{{ selectRoom.roomName }}</div>
           <div class="mrb10">可用面积：{{ selectRoom.area }}</div>
           <div class="mrb10">容纳人数：{{ selectRoom.capacity }}</div>
+          <div class="mrb10 attr">会议室属性：{{ selectRoom.attr }}</div>
           <div class="mrb10 desc">可用资源：{{ selectRoom.roomResourceText }}</div>
           <div class="desc" :title="selectRoom.mainUses">主要用途：{{ selectRoom.mainUses }}</div>
           <div class="metdesc" v-html="handleMeetingRoomHtml()"></div>
