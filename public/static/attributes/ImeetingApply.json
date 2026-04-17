@@ -36,6 +36,14 @@
             "default": false
           },
           {
+            "type": "switch",
+            "layoutType": "inline",
+            "text": "按日期申请移动到会议名称是否显示浮窗",
+            "desc": "开启将显示浮窗，关闭将不显示浮窗",
+            "bindKey": "showFloatWindow",
+            "default": false
+          },
+          {
             "type": "input",
             "layoutType": "inline",
             "text": "日查看",

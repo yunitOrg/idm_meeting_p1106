@@ -47,10 +47,54 @@
             @mouseup="handleTrMouseUp">
             <template v-if="isShowBuilding">
               <td class="td-room"><span>{{ room.roomClass }}</span></td>
-              <td class="td-room"><span>{{ room.roomName }}</span></td>
+              <td class="td-room">
+                <template v-if="propData.showFloatWindow">
+                  <a-popover placement="right" overlayClassName="room-info-popover-overlay">
+                    <template slot="content">
+                      <div class="room-info-popover-wrapper">
+                        <div class="info-left">
+                          <div class="info-title">{{ room.roomName }}</div>
+                          <div class="info-item">可用面积：{{ room.area || '--' }}</div>
+                          <div class="info-item">容纳人数：{{ room.capacity || '--' }}</div>
+                          <div class="info-item">可用资源：{{ room.roomResourceText || '无' }}</div>
+                        </div>
+                        <div class="info-right" v-if="room.roomPhoto">
+                          <img :src="getImgUrl(room.roomPhoto)" alt="会议室实景" />
+                        </div>
+                      </div>
+                    </template>
+                    <span class="hover-name-span">{{ room.roomName }}</span>
+                  </a-popover>
+                </template>
+                <template v-else>
+                  <span class="hover-name-span">{{ room.roomName }}</span>
+                </template>
+              </td>
             </template>
             <template v-else>
-              <td class="td-room"><span>{{ room.roomClass }} {{ room.roomName }}</span></td>
+              <td class="td-room">
+                <template v-if="propData.showFloatWindow">
+                  <a-popover placement="right" overlayClassName="room-info-popover-overlay">
+                    <template slot="content">
+                      <div class="room-info-popover-wrapper">
+                        <div class="info-left">
+                          <div class="info-title">{{ room.roomName }}</div>
+                          <div class="info-item">可用面积：{{ room.area || '--' }}</div>
+                          <div class="info-item">容纳人数：{{ room.capacity || '--' }}</div>
+                          <div class="info-item">可用资源：{{ room.roomResourceText || '无' }}</div>
+                        </div>
+                        <div class="info-right" v-if="room.roomPhoto">
+                          <img :src="getImgUrl(room.roomPhoto)" alt="会议室实景" />
+                        </div>
+                      </div>
+                    </template>
+                    <span class="hover-name-span">{{ room.roomClass }} {{ room.roomName }}</span>
+                  </a-popover>
+                </template>
+                <template v-else>
+                  <span class="hover-name-span">{{ room.roomClass }} {{ room.roomName }}</span>
+                </template>
+              </td>
             </template>
             <template v-for="(td, subindex) in theadTimeList">
               <td :key="subindex"
@@ -155,12 +199,8 @@ export default {
     simplebarvue
   },
   props: {
-    moduleObject: {
-      type: Object
-    },
-    propData: {
-      type: Object
-    },
+    moduleObject: { type: Object },
+    propData: { type: Object },
   },
   mixins: [ImeetingApply],
   data() {
@@ -171,67 +211,42 @@ export default {
       timeVisible: {
         show: false,
         width: '',
-        // 表头
         dialogThead: [],
-        // 色块
         disloagBlock: []
       },
       weekCn: ["一", "二", "三", "四", "五", "六", "日"],
-      // 日期 开始时间
       startTime: '',
-      // 日期 结束时间
       endTime: '',
-      // 工作 开始时间
       workStar: '',
-      // 工作 结束时间
       workEnd: '',
-      //是否工作结束时间超过了18点
       isWorkEndOver18: false,
-      // 会议室
       roomList: [],
-      // 头部
       theadList: [],
-      // 头部时间
       theadTimeList: [],
-      // 色块
       blockList: [],
-      // 图例
       legendList: [
-        {
-          color: "#cccccc",
-          text: "占用",
-          value: 3
-        },
-        {
-          color: "#316EFE",
-          text: "确认中",
-          value: 1
-        },
-        {
-          color: "#28CB7C",
-          text: "已确认",
-          value: 2
-        },
-        {
-          color: "#f3efef",
-          text: "空闲",
-          value: 4
-        },
-        {
-          color: "#FFBA00",
-          text: "我参加",
-          value: 5
-        },
+        { color: "#cccccc", text: "占用", value: 3 },
+        { color: "#316EFE", text: "确认中", value: 1 },
+        { color: "#28CB7C", text: "已确认", value: 2 },
+        { color: "#f3efef", text: "空闲", value: 4 },
+        { color: "#FFBA00", text: "我参加", value: 5 },
       ],
       noon: []
     }
   },
   methods: {
-    //获取唯一值
-     getUniqueId() {
+    // 图片路径处理
+    getImgUrl(url) {
+      if (!url) return '';
+      let urlStr = url.split(',')[0]; // 如果有多图，默认取第一张
+      if (urlStr.startsWith('http') || urlStr.startsWith('data:image')) {
+        return urlStr;
+      }
+      return window.IDM && window.IDM.url ? window.IDM.url.getWebPath(urlStr) : urlStr;
+    },
+    getUniqueId() {
       return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     },
-    // 时间弹框 表头
     handleDialoglogic(timeObj) {
       let start = moment(timeObj.start, "HH:mm");
       let end = moment(timeObj.end, "HH:mm");
@@ -262,36 +277,15 @@ export default {
       } else if (meetingStart.isBefore(start, "YYYY-MM-DD HH:mm") && meetingEnd.isBetween(moment(start, "YYYY-MM-DD HH:mm"), moment(end, "YYYY-MM-DD HH:mm"), null, '[]')) {
         enterIndex = 0
         targetAry.forEach((section, index) => {
-          // 时间段开始时间
-          const sectionStart = moment(
-            clickYear + " " + section.start,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 时间段结束数据
-          const sectionEnd = moment(
-            clickYear + " " + section.end,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 走出时间段
-          if(meetingEnd.isAfter(sectionEnd) || meetingEnd.isSame(sectionEnd)) {
-            count++;
-          }
+          const sectionStart = moment(clickYear + " " + section.start, "YYYY-MM-DD HH:mm");
+          const sectionEnd = moment(clickYear + " " + section.end, "YYYY-MM-DD HH:mm");
+          if(meetingEnd.isAfter(sectionEnd) || meetingEnd.isSame(sectionEnd)) { count++; }
         })
       } else if (meetingEnd.isBefore(moment(start, "YYYY-MM-DD HH:mm")) || meetingStart.isAfter(moment(end, "YYYY-MM-DD HH:mm")) || meetingStart.isSame(moment(end, "YYYY-MM-DD HH:mm"))) {
-        // 不处理
       } else if (meetingStart.isBetween(moment(start, "YYYY-MM-DD HH:mm"), moment(end, "YYYY-MM-DD HH:mm"), null, '[]') && meetingEnd.isAfter(moment(end, "YYYY-MM-DD HH:mm"))) {
         targetAry.forEach((section, index) => {
-          //时间段开始时间
-          const sectionStart = moment(
-            clickYear + " " + section.start,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 时间段结束数据
-          const sectionEnd = moment(
-            clickYear + " " + section.end,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 进入时间段
+          const sectionStart = moment(clickYear + " " + section.start, "YYYY-MM-DD HH:mm");
+          const sectionEnd = moment(clickYear + " " + section.end, "YYYY-MM-DD HH:mm");
           if(meetingStart.isBetween(sectionStart, sectionEnd) ||  sectionStart.isSame(meetingStart) ) {
             enterIndex = index;
           }
@@ -299,47 +293,30 @@ export default {
         count = targetAry.length - enterIndex
       } else {
         targetAry.forEach((section, index) => {
-          //时间段开始时间
-          const sectionStart = moment(
-            clickYear + " " + section.start,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 时间段结束数据
-          const sectionEnd = moment(
-            clickYear + " " + section.end,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 进入时间段
+          const sectionStart = moment(clickYear + " " + section.start, "YYYY-MM-DD HH:mm");
+          const sectionEnd = moment(clickYear + " " + section.end, "YYYY-MM-DD HH:mm");
           if(meetingStart.isBetween(sectionStart, sectionEnd) || sectionStart.isSame(meetingStart)) {
             bettwen = true;
             enterIndex = index;
           }
-          // 走出时间段
           if(meetingEnd.isBetween(sectionStart, sectionEnd) || sectionEnd.isSame(meetingEnd)) {
             count++;
             bettwen = false;
           }
-          // 在时间段之前计数
           if (bettwen) count++;
         });
       }
-      return {
-        count: count,
-        enterIndex: enterIndex
-      }
+      return { count: count, enterIndex: enterIndex }
     },
-    // 计算弹框色块
     handleDialogColorBlock(meetingAll, clickYear) {
       if (meetingAll && meetingAll.length > 0) {
         meetingAll.forEach(meeting => {
-          let meetingStart = meeting.satrtTime;
-          meetingStart = moment(meetingStart, "YYYY-MM-DD HH:mm"); //会议开始时间
-          let meetingEnd = meeting.endTime;
-          meetingEnd = moment(meetingEnd, "YYYY-MM-DD HH:mm"); //会议结束时间
+          let meetingStart = moment(meeting.satrtTime, "YYYY-MM-DD HH:mm");
+          let meetingEnd = moment(meeting.endTime, "YYYY-MM-DD HH:mm");
           let { count, enterIndex } = this.computedDialogColor({meetingStart, meetingEnd, clickYear: clickYear})
-          meeting.count = count; // 计算占用多少格
-          meeting.roomIndex = 1; // 计算定位top
-          meeting.enterIndex = enterIndex; // 计算定位left
+          meeting.count = count; 
+          meeting.roomIndex = 1; 
+          meeting.enterIndex = enterIndex; 
           this.hanldeColorBlock(meeting)
           this.timeVisible.disloagBlock.push(meeting);
         })
@@ -359,34 +336,20 @@ export default {
       this.timeVisible.disloagBlock = [];
       let start = item.section.start?.split(' '),
         end = item.section.end?.split(' ')[1];
-      // 计算表头
       this.handleDialoglogic({year: start[0], start: start[1], end: end})
-      // 设置弹框宽度
       this.timeVisible.width = this.timeVisible.dialogThead.length * 60 + 50 + 'px'
-      // 找到对应 会议室数据
       let meetingRoomUsageData = this.roomList.find(k => k.roomId == item.roomId).meetingRoomUsageData;
-      // 计算色块
       this.handleDialogColorBlock(meetingRoomUsageData, start[0])
       this.timeVisible.show = true
     },
     showTimeTd(td, index) {
       const m = td.start.slice(3);
-      if (m === "00") {
-        return true;
-      }
-      if (m === "30" && (index === 0 || index === this.timeVisible.dialogThead.length)) {
-        return true;
-      }
+      if (m === "00") { return true; }
+      if (m === "30" && (index === 0 || index === this.timeVisible.dialogThead.length)) { return true; }
     },
-    hadnleforeNoon() {
-      return IDM.url.getModuleAssetsWebPath(require('../../assets/am.jpg'), this.moduleObject)
-    },
-    hadnleafterNoon() {
-      return IDM.url.getModuleAssetsWebPath(require('../../assets/pm.jpg'), this.moduleObject)
-    },
-    hadnlPm2Noon() {
-      return IDM.url.getModuleAssetsWebPath(require('../../assets/pm2.png'), this.moduleObject)
-    },
+    hadnleforeNoon() { return IDM.url.getModuleAssetsWebPath(require('../../assets/am.jpg'), this.moduleObject) },
+    hadnleafterNoon() { return IDM.url.getModuleAssetsWebPath(require('../../assets/pm.jpg'), this.moduleObject) },
+    hadnlPm2Noon() { return IDM.url.getModuleAssetsWebPath(require('../../assets/pm2.png'), this.moduleObject) },
     handleOk() {
       this.confirmLoading = true;
       let { room, td } = this.jumpParams
@@ -408,44 +371,19 @@ export default {
         window.open(url)
       } catch(e) {}
     },
-    // 色块跳转
-    handleOpenUrl(item) {
-      this.$emit('colorJumpUrl', item)
-    },
-    // 点击跳转
-    handleIsClick(start) {
-      return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm"))
-    },
-    // handleOpenPage(block) {
-    //   let room = {
-    //     roomId: block.roomId,
-    //     roomName: block.roomName
-    //   }
-    //   let td = {
-    //     start: block.satrtTime,
-    //     end: block.endTime
-    //   }
-    //   this.handleClickTd(room, td, true)
-    // },
-    // 点击td
+    handleOpenUrl(item) { this.$emit('colorJumpUrl', item) },
+    handleIsClick(start) { return moment(start).isBefore(moment().format("YYYY-MM-DD HH:mm")) },
     async handleClickTd(room, td, flag) {
-      if (this.mouseupFlag) {
-        return
-      }
+      if (this.mouseupFlag) return
       try{
         if (!flag) {
           if (this.showTips({end: td.end})) return
-
           if (this.handleIsClick(td.start)) {
-            message.config({
-              duration: 1,
-              top: '50%'
-            })
+            message.config({ duration: 1, top: '50%' })
             message.error("不能预定当前时间以前的会议!")
             return
           }
         }
-
         this.jumpParams = {}
         this.orgId = ''
         let moduleId  = '190111184257QgSNR8cW92akDpqeWMA';
@@ -461,14 +399,12 @@ export default {
             this.jumpParams = {room, td}
             this.visible = true
           } else {
-            let start = td.start;
-            let end = td.end;
+            let start = td.start; let end = td.end;
             const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
             window.open(url)
           }
         } else {
-          let start = td.start;
-          let end = td.end;
+          let start = td.start; let end = td.end;
           const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
           window.open(url)
         }
@@ -480,17 +416,12 @@ export default {
       try{
         if (!flag) {
           if (this.showTips({end: td.end})) return
-
           if (this.handleIsClick(td.start)) {
-            message.config({
-              duration: 1,
-              top: '50%'
-            })
+            message.config({ duration: 1, top: '50%' })
             message.error("不能预定当前时间以前的会议!")
             return
           }
         }
-
         this.jumpParams = {}
         this.orgId = ''
         let moduleId  = '190111184257QgSNR8cW92akDpqeWMA';
@@ -506,22 +437,17 @@ export default {
             this.jumpParams = {room, td}
             this.visible = true
           } else {
-            let start = td.start;
-            let end = td.end;
+            let start = td.start; let end = td.end;
             const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
             window.open(url)
           }
         } else {
-          let start = td.start;
-          let end = td.end;
+          let start = td.start; let end = td.end;
           const url = window.IDM.url.getURLRoot() + "ctrl/formControl/form?moduleId="+moduleId+"&startTime=" + start+"&endTime="+end+"&roomId="+room.roomId+"&roomName="+encodeURI(room.roomName);
           window.open(url)
         }
-      } catch(e) {
-        console.log(e)
-      }
+      } catch(e) { console.log(e) }
     },
-    // 判断时间段是否已过
     showTips(obj) {
       let { start, end } = obj
       if (!this.propData.timeControl) {
@@ -533,8 +459,6 @@ export default {
     handleDomHeight({height}) {
       let span = document.createElement('span')
       let result = {}
-      result.width = span.offsetWidth;
-      result.height = span.offsetHeight;
       span.style.display = 'inline-block';
       span.style.visibility = 'hidden';
       span.style.height = height
@@ -545,7 +469,6 @@ export default {
       return result
     },
     initTable(weekListTable) {
-      console.log(weekListTable);
       this.isWorkEndOver18 = false;
       this.setBoxHeight = this.propData.meetingWeekHei;
       this.roomList = [];
@@ -559,29 +482,23 @@ export default {
       this.endTime = weekListTable.showEndDate
       this.workStar = weekListTable.workingStartTime
       this.workEnd = weekListTable.offDutyEndTime
-      // 初始化表头
       this.initThead()
-      // 计算色块
       this.initRoom()
       let tableHeight = this.handleDomHeight({height: this.propData.meetingWeekHei});
       this.$nextTick(() => {
         let td = this.$refs.table?.querySelector('.td-room')
         let theadtd = this.$refs.table?.querySelector('.td-name')
-        let realTableHeight = (this.roomList.length) * td.offsetHeight
-        if (realTableHeight <= tableHeight.height) {
-          // let dom = this.$refs.weekTable;
-          // dom.style.height = `${realTableHeight}px`
-          this.setBoxHeight = `${realTableHeight+theadtd.offsetHeight}px`
-        } else {
-          this.setBoxHeight = this.propData.meetingWeekHei;
-          // let dom = this.$refs.weekTable;
-          // dom.style.height = this.propData.meetingWeekHei;
+        if (td && theadtd) {
+          let realTableHeight = (this.roomList.length) * td.offsetHeight
+          if (realTableHeight <= tableHeight.height) {
+            this.setBoxHeight = `${realTableHeight+theadtd.offsetHeight}px`
+          } else {
+            this.setBoxHeight = this.propData.meetingWeekHei;
+          }
         }
       })
-      // 渲染色块
       this.initBlock()
     },
-    // 计算表头数据
     handleTheadData() {
       let that = this;
       let start =  moment(this.startTime, "YYYY-MM-DD");
@@ -590,32 +507,18 @@ export default {
         while (start.isBefore(end) || start.isSame(end)) {
           that.noon.forEach((item, index) => {
               if (index == 0) {
-                this.theadTimeList.push({
-                  start: start.format('YYYY-MM-DD') + " " + this.workStar,
-                  end: start.format('YYYY-MM-DD') + " " + '13:00'
-                })
+                this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + this.workStar, end: start.format('YYYY-MM-DD') + " " + '13:00' })
               } else {
                 if(this.isWorkEndOver18==false){
-                  this.theadTimeList.push({
-                    start: start.format('YYYY-MM-DD') + " " + '13:00',
-                    end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                  })
-                  
+                  this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + '13:00', end: start.format('YYYY-MM-DD') + " " + this.workEnd })
                 }else{
                   if(index==1){
-                    this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + '13:00',
-                      end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime
-                    })
+                    this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + '13:00', end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime })
                   }
                   if(index==2){
-                    this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime,
-                      end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                    })
+                    this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime, end: start.format('YYYY-MM-DD') + " " + this.workEnd })
                   }
                 }
-                
               }
           })
           start = moment(start).add(1, 'days')
@@ -624,29 +527,16 @@ export default {
         for(let i=1; i<=7; i++) {
           that.noon.forEach((item, index) => {
               if (index == 0) {
-                this.theadTimeList.push({
-                  start: start.format('YYYY-MM-DD') + " " + this.workStar,
-                  end: start.format('YYYY-MM-DD') + " " + '13:00'
-                })
+                this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + this.workStar, end: start.format('YYYY-MM-DD') + " " + '13:00' })
               } else {
                 if(this.isWorkEndOver18==false){
-                  this.theadTimeList.push({
-                    start: start.format('YYYY-MM-DD') + " " + '13:00',
-                    end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                  })
-                  
+                  this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + '13:00', end: start.format('YYYY-MM-DD') + " " + this.workEnd })
                 }else{
                   if(index==1){
-                    this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + '13:00',
-                      end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime
-                    })
+                    this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + '13:00', end: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime })
                   }
                   if(index==2){
-                    this.theadTimeList.push({
-                      start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime,
-                      end: start.format('YYYY-MM-DD') + " " + this.workEnd
-                    })
+                    this.theadTimeList.push({ start: start.format('YYYY-MM-DD') + " " + this.propData.WeekNightTime, end: start.format('YYYY-MM-DD') + " " + this.workEnd })
                   }
                 }
               }
@@ -654,19 +544,13 @@ export default {
           start = moment(start).add(1, 'days')
         }
       }
-      console.log(this.theadTimeList, this.theadList,"表头数据");
     },
-    // 初始化表头
     initThead() {
       let start =  moment(this.startTime, "YYYY-MM-DD");
       let end = moment(this.endTime, "YYYY-MM-DD");
-      //判断this.workEnd是否在18点以后，则分为上午、下午、晚上三个时间段，否则分为上午、晚上两个时间段。
       if (moment(this.workEnd, "HH:mm").isAfter(moment(this.propData.WeekNightTime, "HH:mm"))==false) {
         this.isWorkEndOver18=false
-          this.noon = [
-              {time: `${this.workStar}-13:00`, value: '上午'},
-              {time: `13:00-${this.workEnd}`, value: '下午'}
-          ]
+          this.noon = [ {time: `${this.workStar}-13:00`, value: '上午'}, {time: `13:00-${this.workEnd}`, value: '下午'} ]
       } else {
         this.isWorkEndOver18=true
           this.noon = [
@@ -675,153 +559,47 @@ export default {
             {time: `${this.propData.WeekNightTime}-${this.workEnd}`, value: '晚上'}
           ]
       }
-
-      // this.noon = [
-      //     {time: `${this.workStar}-13:00`, value: '上午'},
-      //     {time: `13:00-${this.workEnd}`, value: '下午'}
-      // ]
       if (start.isBefore(end) || start.isSame(end)) {
         while (start.isBefore(end) || start.isSame(end)) {
-          this.theadList.push({
-            day: start.format('YYYY-MM-DD'),
-            noon: this.noon
-          })
+          this.theadList.push({ day: start.format('YYYY-MM-DD'), noon: this.noon })
           start = moment(start).add(1, 'days')
         }
         this.handleTheadData()
       } else {
         for(let i=1; i<=7; i++) {
-          this.theadList.push({
-            day: start.format('YYYY-MM-DD'),
-            noon: this.noon
-          })
+          this.theadList.push({ day: start.format('YYYY-MM-DD'), noon: this.noon })
           start = moment(start).add(1, 'days')
         }
         this.handleTheadData()
       }
     },
-    // 计算颜色
     hanldeColorBlock(meeting) {
-      if (meeting.isAttend && meeting.isAttend == 1) { // 已参会
+      if (meeting.isAttend && meeting.isAttend == 1) { 
         meeting.color = this.legendList.find(k => k.value == 5)?.color
       } else {
         meeting.color = this.legendList.find(k => k.value == meeting.status)?.color
       }
     },
-    // 计算会议室占用时间
     computedRoomTime(meeting, ri, roomId) {
-      let meetingStart = meeting.satrtTime;
-      meetingStart = moment(meetingStart, "YYYY-MM-DD HH:mm"); //会议开始时间
-      let meetingEnd = meeting.endTime;
-      meetingEnd = moment(meetingEnd, "YYYY-MM-DD HH:mm"); //会议结束时间
-
-      // let count = 0, enterIndex = 0, bettwen = false;
-      // let timestart = this.theadTimeList[0]
-      // let timeend = this.theadTimeList[this.theadTimeList.length-1]
-      // let start = this.theadTimeList[0].start
-      // let end = this.theadTimeList[this.theadTimeList.length-1].end;
-
-      // if (meetingStart.isBefore(moment(start, "YYYY-MM-DD HH:mm")) && meetingEnd.isAfter(moment(end, "YYYY-MM-DD HH:mm"))) {
-      //   this.theadTimeList.forEach((item, i) => {
-      //     meeting.count = 1 // 计算占用多少格
-      //     meeting.roomIndex = ri // 计算定位top
-      //     meeting.enterIndex = i // 计算定位left
-      //     this.hanldeColorBlock(meeting)
-      //     this.blockList.push(meeting);
-      //   })
-      // } else if (meetingStart.isBefore(moment(start, "YYYY-MM-DD HH:mm")) && meetingEnd.isBetween(moment(start, "YYYY-MM-DD HH:mm"), moment(end, "YYYY-MM-DD HH:mm"), null, '[]')) {
-      //   this.theadTimeList.forEach((section, i) => {
-      //     // 时间段开始时间
-      //     const sectionStart = moment(
-      //       section.start,
-      //       "YYYY-MM-DD HH:mm"
-      //     );
-      //     // 时间段结束数据
-      //     const sectionEnd = moment(
-      //       section.end,
-      //       "YYYY-MM-DD HH:mm"
-      //     );
-      //     let obj = Object.assign({}, meeting, { count: 1, roomIndex: ri, enterIndex: i })
-      //     this.hanldeColorBlock(obj)
-      //     // 时间段内
-      //     if(meetingEnd.isAfter(sectionStart) || meetingEnd.isSame(sectionEnd)) {
-      //       this.blockList.push(obj);
-      //     }
-      //   })
-      // } else if (meetingEnd.isBefore(moment(start, "YYYY-MM-DD HH:mm"))) {
-      //   // 不处理
-      // } else if (meetingStart.isBetween(moment(start, "YYYY-MM-DD HH:mm"), moment(end, "YYYY-MM-DD HH:mm"), null, '[]') && meetingEnd.isAfter(moment(end, "YYYY-MM-DD HH:mm"))) {
-      //   this.theadList.forEach((section, i) => {
-      //     //时间段开始时间
-      //     const sectionStart = moment(
-      //       section.start,
-      //       "YYYY-MM-DD HH:mm"
-      //     );
-      //     // 时间段结束数据
-      //     const sectionEnd = moment(
-      //       section.end,
-      //       "YYYY-MM-DD HH:mm"
-      //     );
-      //     // 进入时间段
-      //     if(meetingStart.isBetween(sectionStart, sectionEnd) ||  sectionStart.isSame(meetingStart) ) {
-      //       let obj = Object.assign({}, meeting, { count: 1, roomIndex: ri, enterIndex: i })
-      //       this.hanldeColorBlock(obj)
-      //       this.blockList.push(obj);
-      //     }
-      //   });
-      // } else {
-        this.theadTimeList.forEach((section, i) => {
-          //时间段开始时间
-          const sectionStart = moment(
-            section.start,
-            "YYYY-MM-DD HH:mm"
-          );
-          // 时间段结束数据
-          const sectionEnd = moment(
-            section.end,
-            "YYYY-MM-DD HH:mm"
-          );
-          const addfunc = (meeting, params) =>  {
-            let obj = Object.assign({}, meeting, params)
-            this.hanldeColorBlock(obj)
-            this.blockList.push(obj);
-          }
-          // sectionStart.isBetween(meetingStart, meetingEnd, null, '[') || (sectionStart.isBefore(meetingStart) && sectionEnd.isAfter(meetingEnd))
-          // , meeting.room)
-          if ((sectionStart.isBetween(meetingStart, meetingEnd) || sectionStart.isSame(meetingStart))
-            || (sectionStart.isBefore(meetingStart) && sectionEnd.isAfter(meetingEnd))
-            || (sectionStart.isBefore(meetingStart) && sectionEnd.isSame(meetingEnd))
-            || (sectionStart.isBefore(meetingStart) && sectionEnd.isBetween(meetingStart, meetingEnd))) {
-            addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i, section: section, roomId: roomId })
-          }
-          // 进入时间段
-          // if (meetingStart.isBefore(sectionStart) && meetingEnd.isAfter(sectionEnd)) {
-          //   addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i })
-          // } else if (meetingStart.isBefore(sectionStart) && meetingEnd.isBetween(sectionStart, sectionEnd)) {
-          //   addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i })
-          // } else if (meetingEnd.isBefore(sectionStart)) {
-          //   // 不处理
-          // } else if (meetingStart.isBetween(sectionStart, sectionEnd, null, '[]') || ) {
-          //   addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i })
-          // } else {
-          //   // addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i })
-          // }
-          // 走出时间段
-          // if(meetingEnd.isBetween(sectionStart, sectionEnd) || sectionEnd.isSame(sectionStart)) {
-          //   bettwen = false;
-          // }
-          // // 在时间段之前计数
-          // if (bettwen){
-          //   let obj = Object.assign({}, meeting, { count: 1, roomIndex: ri, enterIndex: enterIndex })
-          //   this.hanldeColorBlock(obj)
-          //   this.blockList.push(obj);
-          // }
-        });
-      // }
+      let meetingStart = moment(meeting.satrtTime, "YYYY-MM-DD HH:mm"); 
+      let meetingEnd = moment(meeting.endTime, "YYYY-MM-DD HH:mm"); 
+      this.theadTimeList.forEach((section, i) => {
+        const sectionStart = moment(section.start, "YYYY-MM-DD HH:mm");
+        const sectionEnd = moment(section.end, "YYYY-MM-DD HH:mm");
+        const addfunc = (meeting, params) =>  {
+          let obj = Object.assign({}, meeting, params)
+          this.hanldeColorBlock(obj)
+          this.blockList.push(obj);
+        }
+        if ((sectionStart.isBetween(meetingStart, meetingEnd) || sectionStart.isSame(meetingStart))
+          || (sectionStart.isBefore(meetingStart) && sectionEnd.isAfter(meetingEnd))
+          || (sectionStart.isBefore(meetingStart) && sectionEnd.isSame(meetingEnd))
+          || (sectionStart.isBefore(meetingStart) && sectionEnd.isBetween(meetingStart, meetingEnd))) {
+          addfunc(meeting, { count: 1, roomIndex: ri, enterIndex: i, section: section, roomId: roomId })
+        }
+      });
     },
-    // 初始化会议室
     initRoom() {
-
       if (this.roomList && this.roomList.length > 0) {
         this.roomList.forEach((room, ri) => {
           if(room.meetingRoomUsageData && room.meetingRoomUsageData.length > 0) {
@@ -836,7 +614,6 @@ export default {
         this.blockList = this.blockList.filter(k => k.count > 0);
       }
     },
-    // 渲染色块
     initBlock() {
       this.$nextTick(() => {
         const tableEle = this.$refs.table;
@@ -869,6 +646,49 @@ export default {
 </script>
 
 <style>
+/* 悬浮窗全局样式优化 */
+.room-info-popover-overlay .ant-popover-inner-content {
+  padding: 16px;
+}
+.room-info-popover-wrapper {
+  display: flex;
+  align-items: stretch;
+  max-width: 500px;
+  min-width: 320px;
+}
+.room-info-popover-wrapper .info-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-right: 16px;
+}
+.room-info-popover-wrapper .info-left .info-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+.room-info-popover-wrapper .info-left .info-item {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+  width: 250px;
+
+}
+.room-info-popover-wrapper .info-right {
+  width: 180px;
+  /* height: 110px; */
+  display: flex;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.room-info-popover-wrapper .info-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .idm-meeting-room-tooltip p{
   margin: 0;
   padding: 0;
@@ -880,18 +700,13 @@ export default {
 
 <style lang="scss" scoped>
 .weekdialog{
-  table{
-    position: relative;
-  }
+  table{ position: relative; }
   .idm-meeting-room-card-table{
-    // width: 100%;
     height: 100%;
     border: 0;
     border-collapse: collapse;
     table-layout: fixed;
-    .td-time{
-      background-color: #f9fcfe;
-    }
+    .td-time{ background-color: #f9fcfe; }
     td{
       height: 50px;
       text-align: center;
@@ -929,21 +744,15 @@ export default {
   color: #333;
   font-size: 16px;
   height: calc(100vh - 200px);
-  .cursor{
-    cursor: pointer;
-  }
-  .holiday {
-    color: #EC4519 !important;
-  }
+  .cursor{ cursor: pointer; }
+  .holiday { color: #EC4519 !important; }
   .idm-meeting-room-card-wrapper{
     width: 100%;
     max-height: 100%;
     height: 100%;
     border: 1px solid #ddd;
     position: relative;
-    ::v-deep .simplebar-scrollbar:before {
-      background-color: #e8e8e8;
-    }
+    ::v-deep .simplebar-scrollbar:before { background-color: #e8e8e8; }
   }
   .idm-meeting-room-card-block-outer{
     position: relative;
@@ -973,33 +782,14 @@ export default {
     border-collapse: unset;
     border: 0;
     table-layout: fixed;
-    .room-sticky{
-      position: sticky;
-      left: 0;
-      top: 0;
-      z-index: 3;
-    }
-    .room-sticky1{
-      position: sticky;
-      left: 0;
-      top: 50px;
-      z-index: 3;
-    }
+    .room-sticky{ position: sticky; left: 0; top: 0; z-index: 3; }
+    .room-sticky1{ position: sticky; left: 0; top: 50px; z-index: 3; }
     tbody{
       border-right: 1px solid transparent;
-      tr:first-child td {
-        border-top-color: transparent;
-      }
-      tr:last-child td {
-        border-bottom-color: transparent;
-      }
-      tr td:first-child {
-        border-left-color: transparent;
-        // border-right-color: transparent;
-      }
-      tr td:last-child {
-        border-right-color: transparent;
-      }
+      tr:first-child td { border-top-color: transparent; }
+      tr:last-child td { border-bottom-color: transparent; }
+      tr td:first-child { border-left-color: transparent; }
+      tr td:last-child { border-right-color: transparent; }
     }
     .td-time{
       position: sticky;
@@ -1008,19 +798,13 @@ export default {
       z-index: 3;
       border-top-color: transparent;
     }
-    .td-time:last-child{
-      border-right-color: transparent;
-    }
-    .td-noon:last-child{
-      border-right-color: transparent;
-    }
+    .td-time:last-child{ border-right-color: transparent; }
+    .td-noon:last-child{ border-right-color: transparent; }
     .td-name{
       border-left-color: transparent;
       border-top-color: transparent;
     }
-    .td-name, .td-time, .td-noon{
-      background-color: #f9fcfe;
-    }
+    .td-name, .td-time, .td-noon{ background-color: #f9fcfe; }
     td{
       height: 50px;
       text-align: center;
@@ -1031,29 +815,24 @@ export default {
       font-weight: 500;
       color: #333;
     }
-    .mouse{
-      background-color: #4ea6e0;
-    }
-    .td-content td{
-      height: 50px;
-    }
-    .td-noon img{
-      width: 15px;
-      height: 15px;
-      margin-right: 5px;
-    }
+    .mouse{ background-color: #4ea6e0; }
+    .td-content td{ height: 50px; }
+    .td-noon img{ width: 15px; height: 15px; margin-right: 5px; }
     .td-room{
       user-select: none;
-      pointer-events: none;
       background-color: #f9fcfe;
+      overflow: visible; /* 保证Popover正确渲染 */
+      .hover-name-span {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        line-height: 50px; /* 撑开 td 的可触发区域 */
+        cursor: pointer;
+      }
     }
     .td-item{
       position: relative;
-      &:hover{
-        .td-tips{
-          display: block;
-        }
-      }
+      &:hover{ .td-tips{ display: block; } }
     }
     .td-tips{
       user-select: none;
@@ -1086,9 +865,7 @@ export default {
     font-size: 16px;
     .legend-item{
       margin-right: 20px;
-      &:last-child {
-        margin-right: 0;
-      }
+      &:last-child { margin-right: 0; }
       .legend-item-circle {
         display: inline-block;
         width: 10px;

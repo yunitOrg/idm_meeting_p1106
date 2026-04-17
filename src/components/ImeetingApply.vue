@@ -213,6 +213,7 @@ export default {
         meetingDayHei: 'calc(100vh - 230px)',
         meetingWeekHei: 'calc(100vh - 200px)',
         WeekNightTime:"19:00",
+        showFloatWindow:false,
         ulbox: {
           marginTopVal: "",
           marginRightVal: "",
@@ -230,6 +231,8 @@ export default {
     this.moduleObject = this.$root.moduleObject;
     this.requireDic();
     this.init();
+    console.log(this.propData.showFloatWindow,"是否显示浮窗");
+    
     // 挂载到window上
     window.meetingApply = {
       handleRefreshTable: this.handleRefreshTable
