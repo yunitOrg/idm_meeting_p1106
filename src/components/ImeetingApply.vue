@@ -31,7 +31,7 @@
             <div class="date-left">
               <weekTime :value.sync="selectWeack" @change="handleWeekTime" ref="weekTime"></weekTime>
               <a-checkbox v-model="search.checkdBox" @change="handleRefreshTable" class="meeting-kong">只看当日空闲</a-checkbox>
-              <a-popover v-model="mettingPopver" trigger="click" placement="bottom" overlayClassName="meeting-popover">
+              <!-- <a-popover v-model="mettingPopver" trigger="click" placement="bottom" overlayClassName="meeting-popover">
                 <template slot="content">
                   <div class="meeting-popover-line" v-if="searchListDic.regionList">
                     <div>区域</div>
@@ -72,11 +72,13 @@
                   </div>
                 </template>
                 <span class="moreColor">更多选项</span>
-              </a-popover>
+              </a-popover> -->
             </div>
             <div class="date-right">
+               <label for="">会议室：<a-input v-model="roomName" allowClear placeholder="请输入会议室名称" class="mrt22" style="width:130px;"  @pressEnter="handleRefreshTable"/></label>
+              <a-button @click="handleRefreshTable" class="mrt21" type="primary">检索</a-button>
               <a-config-provider :locale="locale">
-                <a-date-picker v-model="datePicker" @change="handleDatePicker" class="mrt20" style="color:#025FB2;width:130px;" />
+                <a-date-picker v-model="datePicker" @change="handleDatePicker" class="mrt20" style="color:#025FB2;width:120px;" />
               </a-config-provider>
               <a-button @click="hanleToDay">今天</a-button>
             </div>
@@ -93,8 +95,12 @@
         </template>
         <!--周查看-->
         <template v-if="typeActivity == 'week'">
-          <div class="mtl20">
+          <div class="mtl20" style="display: flex; align-items: center;justify-content: space-between;">
             <weekReport :value.sync="selectWeekObj" @handleRefresh="handleReWeekData"></weekReport>
+            <div>
+              <label for="">会议室：<a-input v-model="roomName" allowClear placeholder="请输入会议室名称" class="mrt22" style="width:130px;"  @pressEnter="handleRefreshTable"/></label>
+              <a-button @click="handleRefreshTable" class="mrt21" type="primary">检索</a-button>
+            </div>
           </div>
           <div class="meeting-table">
             <weekTable
@@ -113,7 +119,8 @@
           ref="meetingRoom"
           :moduleObject="moduleObject"
           :propData="propData"
-          @colorJumpUrl="colorJumpUrl">
+          @colorJumpUrl="colorJumpUrl"
+          @initMeetingRoomData="initMeetingRoomData">
         </meetingRoom>
       </template>
       <!--我的申请-->
@@ -197,6 +204,7 @@ export default {
         freeTimeList: [], // 空闲时间
       },
       selectWeack: moment().format("YYYY-MM-DD"),
+      roomName: '',
       selectWeekObj: {
         start: '',
         end: ''
@@ -213,7 +221,8 @@ export default {
         meetingDayHei: 'calc(100vh - 230px)',
         meetingWeekHei: 'calc(100vh - 200px)',
         WeekNightTime:"19:00",
-        showFloatWindow:false,
+        showAllRoomName:true,
+        showFloatWindow:true,
         ulbox: {
           marginTopVal: "",
           marginRightVal: "",
@@ -406,6 +415,7 @@ export default {
     handleType(item) {
       if (item.value == this.typeActivity) return
       this.typeActivity = item.value;
+      this.roomName = ''
       this.$nextTick(() => {
         this.handleRefreshTable()
       })
@@ -469,6 +479,7 @@ export default {
           rnrsValue: rnrsValue, // 人数
           showTime: this.selectWeack,  // 时间
           freeTime: freeTime, // 空闲时间
+          roomNameFuzzy: this.roomName, // 会议室名称
           checkedIdle: this.search.checkdBox // 只查看当日空闲
         }
         let res = await API.ApiMeetingDayRoomList(obj)
@@ -478,7 +489,7 @@ export default {
           fn && fn()
         }
       } else if(this.typeActivity == 'week') { // 周查看
-        let res = await API.ApiMeetingWeekRoomList({showStartDate: this.selectWeekObj.start, showEndDate: this.selectWeekObj.end})
+        let res = await API.ApiMeetingWeekRoomList({showStartDate: this.selectWeekObj.start, showEndDate: this.selectWeekObj.end,roomNameFuzzy: this.roomName})
         this.loading = false
         if (res.code == '200') {
           this.weekListTable = res.data
@@ -486,9 +497,10 @@ export default {
         }
       }
     },
-    // 按会议室申请
-    async initMeetingRoomData() {
-      let res = await API.ApiMeetingRoomData()
+    // 按会议室申请 (支持传入搜索名称)
+    async initMeetingRoomData(roomName = '') {
+      let rName = typeof roomName === 'string' ? roomName : '';
+      let res = await API.ApiMeetingRoomData(rName)
       this.loading = false;
       if(res.code == '200') {
         let data = res.data || [];
@@ -565,10 +577,16 @@ export default {
   .mrt20{
     margin-right: 20px;
   }
+  .mrt21{
+    background-color: #1890ff;
+   }
+  .mrt21, .mrt22{
+    margin-right: 10px;
+  }
   .date-right{
     ::v-deep .ant-input{
       color: #025FB2;
-    }
+    } 
   }
   .meeting-kong{
     margin-right: 20px;

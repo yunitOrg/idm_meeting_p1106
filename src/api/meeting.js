@@ -4,7 +4,7 @@ export default{
     * @Author hjp
     */
   async ApiGetItemsByMetting() {
-    const { data } = await window.IDM.http.get('ctrl/meetingPortal/getQueryItemsByMettingRoom', {},{
+    const { data } = await window.IDM.http.get('/ctrl/meetingPortal/getQueryItemsByMettingRoom', {},{
       headers: {
         'Content-Type': 'application/json'
       },
@@ -23,7 +23,7 @@ export default{
     let formdata = new FormData();
     formdata.append('data', JSON.stringify(params))
     formdata.append('mainCatagory', 4)
-    const { data } = await window.IDM.http.post('ctrl/configsetup/save', formdata, {
+    const { data } = await window.IDM.http.post('/ctrl/configsetup/save', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -35,7 +35,7 @@ export default{
     * @Author hjp
     */
   async ApiGetMeetingRoom() {
-    const { data } = await window.IDM.http.get('ctrl/meetingPortal/getCustomTimePeriodsByMettingRoom', {}, {
+    const { data } = await window.IDM.http.get('/ctrl/meetingPortal/getCustomTimePeriodsByMettingRoom', {}, {
       headers: {
         'Content-Type': 'application/json'
       },
@@ -46,7 +46,7 @@ export default{
     * @Desc 会议申请-日-会议室使用信息
     * @Author hjp
     */
-  async ApiMeetingDayRoomList({buildingType, siteType, rnrsValue, showTime, freeTime, checkedIdle}) {
+  async ApiMeetingDayRoomList({buildingType, siteType, rnrsValue, showTime, freeTime, checkedIdle,roomNameFuzzy}) {
     let formdata = new FormData();
     formdata.append('buildingType', buildingType)
     formdata.append('siteType', siteType)
@@ -54,7 +54,8 @@ export default{
     formdata.append('showTime', showTime)
     formdata.append('freeTime', freeTime)
     formdata.append('checkedIdle', checkedIdle)
-    const { data } = await window.IDM.http.post('ctrl/meetingPortal/getDayUsageInfoByMeetingRoom', formdata, {
+    formdata.append('roomNameFuzzy', roomNameFuzzy)
+    const { data } = await window.IDM.http.post('/ctrl/meetingPortal/getDayUsageInfoByMeetingRoom', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -65,11 +66,12 @@ export default{
     * @Desc 会议申请-周-会议室使用信息
     * @Author hjp
     */
-  async ApiMeetingWeekRoomList({showStartDate, showEndDate}) {
+  async ApiMeetingWeekRoomList({showStartDate, showEndDate, roomNameFuzzy}) {
     let formdata = new FormData();
     formdata.append('showStartDate', showStartDate)
     formdata.append('showEndDate', showEndDate)
-    const { data } = await window.IDM.http.post('ctrl/meetingPortal/getWeekUsageInfoByMeetingRoom', formdata, {
+    formdata.append('roomNameFuzzy', roomNameFuzzy)
+    const { data } = await window.IDM.http.post('/ctrl/meetingPortal/getWeekUsageInfoByMeetingRoom', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -80,11 +82,14 @@ export default{
     * @Desc 会议申请-获取会议室使用信息-会议室
     * @Author hjp
     */
-   async ApiMeetingRoomData() {
-    const { data } = await window.IDM.http.get('ctrl/meetingPortal/getMeetingRoomData', {}, {
+   async ApiMeetingRoomData(roomNameFuzzy='') {
+    const { data } = await window.IDM.http.get('/ctrl/meetingPortal/getMeetingRoomData', {}, {
       headers: {
         'Content-Type': 'application/json'
       },
+      params: {
+        roomNameFuzzy: roomNameFuzzy
+      }
     })
     return data
   },
@@ -97,7 +102,7 @@ export default{
     formdata.append('showStartDate', showStartDate)
     formdata.append('showEndDate', showEndDate)
     formdata.append('roomId', roomId)
-    const { data } = await window.IDM.http.post('ctrl/meetingPortal/getRoomUsageInfoByMeetingRoom', formdata, {
+    const { data } = await window.IDM.http.post('/ctrl/meetingPortal/getRoomUsageInfoByMeetingRoom', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
@@ -111,7 +116,7 @@ export default{
   async ApiMeetingAllDept({moduleId}) {
     let formdata = new FormData();
     formdata.append('moduleId', moduleId)
-    const { data } = await window.IDM.http.post('ctrl/newFile/getAllDept', formdata, {
+    const { data } = await window.IDM.http.post('/ctrl/newFile/getAllDept', formdata, {
       headers: {
         'Content-Type': 'multipart/form-data'
       },

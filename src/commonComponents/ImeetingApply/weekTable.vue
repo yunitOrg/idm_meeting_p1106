@@ -88,11 +88,11 @@
                         </div>
                       </div>
                     </template>
-                    <span class="hover-name-span">{{ room.roomClass }} {{ room.roomName }}</span>
+                    <span class="hover-name-span">{{ room.roomName }}</span>
                   </a-popover>
                 </template>
                 <template v-else>
-                  <span class="hover-name-span">{{ room.roomClass }} {{ room.roomName }}</span>
+                  <span class="hover-name-span">{{ room.roomName }}</span>
                 </template>
               </td>
             </template>
@@ -745,7 +745,9 @@ export default {
   font-size: 16px;
   height: calc(100vh - 200px);
   .cursor{ cursor: pointer; }
-  .holiday { color: #EC4519 !important; }
+  .holiday { 
+    // color: #EC4519 !important;
+   }
   .idm-meeting-room-card-wrapper{
     width: 100%;
     max-height: 100%;

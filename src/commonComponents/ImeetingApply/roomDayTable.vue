@@ -76,7 +76,7 @@
                       <template slot="content">
                         <div class="room-info-popover-wrapper">
                           <div class="info-left">
-                            <div class="info-title">{{ room.roomClass }} {{ room.roomName }}</div>
+                            <div class="info-title">{{ room.roomName }}</div>
                             <div class="info-item">可用面积：{{ room.area || '--' }}</div>
                             <div class="info-item">容纳人数：{{ room.capacity || '--' }}</div>
                             <div class="info-item">可用资源：{{ room.roomResourceText || '无' }}</div>
@@ -86,12 +86,16 @@
                           </div>
                         </div>
                       </template>
-                     <span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomNamecopy }}</span>
+                     <!-- <span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomNamecopy }}</span> -->
+                     <span :title="` ${room.roomName}`">{{ room.roomNamecopy }}</span>
+              
                     </a-popover>
                   </template>
                   <template v-else>
-                     <span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomNamecopy }}</span>
-                  </template>
+                     <!-- <span :title="`${room.roomClass} ${room.roomName}`">{{ room.roomClass }} {{ room.roomNamecopy }}</span> -->
+                     <span :title="`${room.roomName}`">{{ room.roomNamecopy }}</span>
+            
+                    </template>
                 </td>
               </template>
               <td v-for="(td, t) in theadList"
@@ -638,12 +642,14 @@ export default {
       z-index: 1;
       overflow: visible; /* 保证Popover正确渲染 */
       span {
-        display: inline-block;
+        display: flex;
         width: 100%;
         height: 100%;
-        line-height: 50px;
-        white-space: nowrap;
+        // line-height: 50px;
+        //white-space: nowrap;
         cursor: pointer;
+        align-items: center;
+        justify-content: center;
       }
     }
     .tdroomflex{

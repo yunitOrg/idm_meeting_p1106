@@ -163,11 +163,11 @@ module.exports = {
     },
     devServer: {
         proxy: {
-            '^/DreamWeb/*': {
-                target: "http://10.1.2.138:30110",
+            '^/JSEPOA/*': {
+                target: "http://10.20.0.117:9999/",
                 changeOrigin: true,
                 pathRewrite: {
-                  '^DreamWeb/': 'DreamWeb/'
+                  '^JSEPOA/': 'JSEPOA/'
                 }
             }
         }

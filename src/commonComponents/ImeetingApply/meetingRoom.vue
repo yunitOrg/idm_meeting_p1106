@@ -36,9 +36,9 @@
           <div class="room-info-title">{{ selectRoom.roomName }}</div>
           <div class="mrb10">可用面积：{{ selectRoom.area }}</div>
           <div class="mrb10">容纳人数：{{ selectRoom.capacity }}</div>
-          <div class="mrb10 attr">会议室属性：{{ selectRoom.attr }}</div>
+          <!-- <div class="mrb10 attr">会议室属性：{{ selectRoom.attr }}</div> -->
           <div class="mrb10 desc">可用资源：{{ selectRoom.roomResourceText }}</div>
-          <div class="desc" :title="selectRoom.mainUses">主要用途：{{ selectRoom.mainUses }}</div>
+          <!-- <div class="desc" :title="selectRoom.mainUses">主要用途：{{ selectRoom.mainUses }}</div> -->
           <div class="metdesc" v-html="handleMeetingRoomHtml()"></div>
         </div>
         <div class="room-info-right">
@@ -48,6 +48,10 @@
     </div>
     <div class="textalign">
       <weekReport :value.sync="selectTime" @handleRefresh="handleRefresh"></weekReport>
+      <div class="meetingflex">
+        <label for="">会议室：<a-input v-model="roomName" :allowClear="true" placeholder="请输入会议室名称" class="mrt22" style="width:140px;" @pressEnter="handleSearchRoom"/></label>
+        <a-button @click="handleSearchRoom" class="mrt21" type="primary">检索</a-button>
+      </div>
     </div>
     <div>
       <meetingTable :propData="propData" ref="meetingTable" :moduleObject="moduleObject" @colorJumpUrl="colorJumpUrl"></meetingTable>
@@ -79,6 +83,7 @@ export default {
         start: '',
         end: ''
       },
+      roomName:'',
       currentPNum: 0,
       roomData: [],
       // 轮播图
@@ -140,13 +145,17 @@ export default {
     handleRefresh() {
       this.getTableData()
     },
+    // 将关键字发送给父组件检索会议室接口
+    handleSearchRoom() {
+      this.$emit('initMeetingRoomData', this.roomName)
+    },
     // 重新渲染色块
     hanldeAgainBlock() {
       this.$refs.meetingTable.initBlock()
     },
     // 获取table
     async getTableData() {
-      let res = await API.ApiMeetingInfoRoom({ showStartDate: this.selectTime.start, showEndDate: this.selectTime.end, roomId: this.selectRoom.roomId })
+      let res = await API.ApiMeetingInfoRoom({ showStartDate: this.selectTime.start, showEndDate: this.selectTime.end, roomId: this.selectRoom.roomId})
       if (res.code == '200') {
         this.$refs.meetingTable.initTable(res.data, this.selectRoom)
       }
@@ -183,6 +192,12 @@ export default {
     margin: 20px 0 10px;
     display: flex;
     justify-content: center;
+  }
+  .meetingflex{
+    margin-left: 10px;
+    .mrt22{
+      margin-right: 10px;
+    }
   }
   .disabled{
     cursor: not-allowed !important;
@@ -259,10 +274,12 @@ export default {
         background-size: 100% 100%;
         background-repeat: no-repeat;
         cursor: pointer;
+        padding-left: 45px;
       }
       .roomactive{
         color: #fff;
         background: url('../../assets/hydd2.png');
+        padding-left: 40px;
       }
     }
   }

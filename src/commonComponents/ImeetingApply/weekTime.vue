@@ -193,7 +193,8 @@ export default {
           border-right: none;
         }
         &.holiday {
-          color: #EC4519;
+          // color: #EC4519;
+          background-color:  #F5F7FA;
         }
         &.today {
           color:#0080ff;

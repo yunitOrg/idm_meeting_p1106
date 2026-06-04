@@ -468,7 +468,7 @@ export default {
     }
   }
   .holiday {
-    color: #EC4519 !important;
+    // color: #EC4519 !important;
   }
   .idm-meeting-room-card-block-outer{
     position: relative;
